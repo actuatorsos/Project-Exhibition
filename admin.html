@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LFCD AI Academy — Student Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#eef3fb;
+    --bg2:#ffffff;
+    --panel:#ffffff;
+    --panel2:#f7faff;
+    --chrome:#eef2f9;
+    --border:rgba(15,23,42,.10);
+    --border2:rgba(15,23,42,.06);
+    --text:#0f1b2d;
+    --muted:#5b6b86;
+    --muted2:#98a4b8;
+    --accent:#2563eb;
+    --accent2:#06b6d4;
+    --danger:#e11d48;
+    --grad:linear-gradient(135deg,#2563eb 0%,#3b82f6 45%,#06b6d4 100%);
+    --glow:0 0 0 1px rgba(37,99,235,.28), 0 18px 44px -16px rgba(37,99,235,.40);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    background:
+      radial-gradient(900px 500px at 10% -10%, rgba(37,99,235,.12), transparent 60%),
+      radial-gradient(900px 600px at 100% 0%, rgba(6,182,212,.10), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(14px);
+    background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.74));
+    border-bottom:1px solid var(--border);
+  }
+  .bar{
+    max-width:1280px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .logo{
+    width:44px;height:44px;border-radius:13px;flex:none;
+    background:var(--grad);
+    display:grid;place-items:center;font-weight:700;color:#fff;
+    font-family:'Space Grotesk',sans-serif;font-size:16px;letter-spacing:.5px;
+    box-shadow:0 8px 22px -6px rgba(37,99,235,.6);
+  }
+  .titles h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:19px;letter-spacing:.3px;margin:0;line-height:1.1;
+  }
+  .titles h1 b{
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .titles p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+  .spacer{flex:1 1 auto}
+  .count{
+    font-size:12.5px;color:var(--muted);
+    border:1px solid var(--border);border-radius:999px;padding:6px 12px;white-space:nowrap;background:var(--bg2);
+  }
+  .count b{color:var(--accent)}
+  .search{
+    display:flex;align-items:center;gap:8px;
+    background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+    padding:8px 12px;min-width:180px;
+  }
+  .search input{
+    background:none;border:none;outline:none;color:var(--text);font-size:13.5px;width:100%;
+  }
+  .search svg{flex:none;opacity:.55}
+
+  /* ---------- Add bar ---------- */
+  .add{ max-width:1280px;margin:18px auto 0;padding:0 24px; }
+  .add form{
+    display:grid;grid-template-columns:1.1fr 1.6fr 1.4fr auto;gap:10px;
+    background:var(--panel);
+    border:1px solid var(--border);border-radius:16px;padding:14px;
+    align-items:center;box-shadow:0 10px 30px -20px rgba(15,23,42,.35);
+  }
+  .field{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .field label{font-size:11px;color:var(--muted2);letter-spacing:.4px;text-transform:uppercase;font-weight:600}
+  .field input{
+    background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+    padding:11px 13px;color:var(--text);font-size:14px;outline:none;transition:.15s;width:100%;
+  }
+  .field input::placeholder{color:var(--muted2)}
+  .field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .add-actions{display:flex;gap:8px;align-items:flex-end;height:100%;padding-bottom:1px}
+  .btn{
+    font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;
+    border-radius:10px;padding:11px 18px;border:1px solid var(--border);
+    background:var(--bg2);color:var(--text);transition:.15s;white-space:nowrap;
+    display:inline-flex;align-items:center;gap:7px;
+  }
+  .btn:hover{border-color:rgba(37,99,235,.4);transform:translateY(-1px)}
+  .btn.primary{background:var(--grad);color:#fff;border:none;box-shadow:0 8px 24px -10px rgba(37,99,235,.85)}
+  .btn.primary:hover{filter:brightness(1.05)}
+  .btn.ghost{background:transparent;color:var(--muted);padding:9px 13px}
+  .btn.ghost:hover{color:var(--text)}
+  .btn.danger:hover{color:var(--danger);border-color:rgba(225,29,72,.4)}
+  .btn.sm{padding:8px 12px;font-size:13px}
+  .hint{max-width:1280px;margin:9px auto 0;padding:0 26px;font-size:12px;color:var(--muted2)}
+
+  /* ---------- Grid ---------- */
+  main{
+    max-width:1280px;margin:0 auto;padding:24px;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:22px;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);border-radius:16px;overflow:hidden;
+    display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s, border-color .18s;
+    box-shadow:0 12px 30px -22px rgba(15,23,42,.4);
+  }
+  .card:hover{transform:translateY(-5px);border-color:rgba(37,99,235,.45);box-shadow:var(--glow)}
+
+  /* ---- Browser window ---- */
+  .screen{display:flex;flex-direction:column;background:var(--chrome)}
+  .chrome{
+    display:flex;align-items:center;gap:9px;padding:9px 12px;
+    border-bottom:1px solid var(--border2);background:var(--chrome);
+  }
+  .dots{display:flex;gap:6px;flex:none}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+  .addr{
+    flex:1;display:flex;align-items:center;gap:8px;min-width:0;
+    background:#fff;border:1px solid var(--border2);border-radius:7px;
+    padding:6px 10px;color:var(--muted);font-size:12px;
+  }
+  .addr .fav{width:14px;height:14px;border-radius:3px;flex:none;background:#e6ecf5}
+  .addr span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lock{flex:none;opacity:.45}
+
+  .viewport{
+    position:relative;width:100%;height:212px;overflow:hidden;background:#e9eef6;
+  }
+  .viewport iframe{
+    position:absolute;top:0;left:0;border:0;transform-origin:0 0;pointer-events:none;background:#fff;
+  }
+  /* fallback sits BEHIND the iframe; shows through if the site refuses to embed */
+  .fallback{
+    position:absolute;inset:0;z-index:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:6px;text-align:center;padding:18px;
+    color:var(--muted);font-size:13px;
+    background:radial-gradient(420px 200px at 50% 0%, rgba(37,99,235,.10), transparent 70%), #eef3fb;
+  }
+  .fallback b{color:var(--text);font-family:'Space Grotesk',sans-serif}
+  .fallback small{color:var(--muted2);font-size:11.5px}
+  .clicklayer{
+    position:absolute;inset:0;z-index:2;cursor:pointer;
+    display:flex;align-items:flex-end;justify-content:flex-end;padding:10px;
+    opacity:0;transition:opacity .15s;
+    background:linear-gradient(180deg, rgba(15,23,42,0) 55%, rgba(15,23,42,.16));
+  }
+  .viewport:hover .clicklayer{opacity:1}
+  .open-hint{
+    font-size:12px;font-weight:600;color:#fff;background:var(--accent);
+    padding:6px 11px;border-radius:999px;display:inline-flex;gap:5px;align-items:center;
+    box-shadow:0 6px 16px -6px rgba(37,99,235,.8);
+  }
+
+  /* ---- Meta ---- */
+  .meta{padding:15px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .meta h3{margin:0;font-size:16px;font-family:'Space Grotesk',sans-serif;font-weight:600}
+  .meta .desc{margin:0;font-size:13px;color:var(--muted);line-height:1.45;flex:1}
+  .actions{display:flex;gap:8px;margin-top:10px}
+  .actions .open{flex:1;justify-content:center}
+
+  /* ---------- Empty state ---------- */
+  .empty{ max-width:620px;margin:40px auto 80px;text-align:center;padding:0 24px;color:var(--muted); }
+  .empty .ic{font-size:46px;margin-bottom:10px}
+  .empty h2{font-family:'Space Grotesk',sans-serif;color:var(--text);margin:0 0 8px;font-weight:600}
+  .empty p{margin:0;line-height:1.6;font-size:14px}
+
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid var(--border);margin-top:30px;background:rgba(255,255,255,.5)}
+  .foot{
+    max-width:1280px;margin:0 auto;padding:18px 24px 40px;
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted2);
+  }
+  .foot .spacer{flex:1}
+
+  /* ---------- QR modal ---------- */
+  .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.45);backdrop-filter:blur(3px)}
+  .modal.show{display:flex}
+  .sheet{position:relative;width:100%;max-width:450px;background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:24px;box-shadow:0 30px 80px -20px rgba(15,23,42,.5)}
+  .sheet h3{margin:0 0 6px;font-family:'Space Grotesk',sans-serif;font-size:18px}
+  .m-sub{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.5}
+  .m-row{display:flex;gap:8px}
+  .m-row input{flex:1;min-width:0;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;color:var(--text);font-size:14px;outline:none}
+  .m-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .x{position:absolute;top:14px;right:14px;border:none;background:none;color:var(--muted2);font-size:17px;cursor:pointer;line-height:1}
+  .x:hover{color:var(--text)}
+  .qr-wrap{margin-top:18px;text-align:center}
+  .qr-wrap img{width:230px;height:230px;border-radius:12px;border:1px solid var(--border);background:#fff;padding:10px}
+  .qr-link{margin:11px 0 9px;font-size:12px;color:var(--accent);word-break:break-all}
+  .qr-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .m-note{margin:10px 0 0;font-size:11.5px;color:var(--muted2);line-height:1.55}
+
+  @media (max-width:720px){
+    .add form{grid-template-columns:1fr 1fr}
+    .add-actions{grid-column:1 / -1}
+    .add-actions .btn{flex:1;justify-content:center}
+    .search{order:5;flex:1 1 100%}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="brand">
+      <div class="logo">AI</div>
+      <div class="titles">
+        <h1>LFCD <b>AI Academy</b></h1>
+        <p>Student Website Showcase</p>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="count" id="count">0 sites</div>
+    <label class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="Search students…" autocomplete="off" />
+    </label>
+  </div>
+</header>
+
+<section class="add">
+  <form id="addForm" autocomplete="off">
+    <div class="field">
+      <label for="name">Student / Project</label>
+      <input id="name" type="text" placeholder="e.g. Lina's Portfolio" required />
+    </div>
+    <div class="field">
+      <label for="url">Website link</label>
+      <input id="url" type="text" placeholder="lina.github.io  or  https://…" required />
+    </div>
+    <div class="field">
+      <label for="desc">Brief (shown when voting)</label>
+      <input id="desc" type="text" placeholder="e.g. AI chatbot for homework help" />
+    </div>
+    <div class="add-actions">
+      <button class="btn primary" type="submit" id="submitBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+        Add
+      </button>
+      <button class="btn ghost" type="button" id="cancelEdit" style="display:none">Cancel</button>
+    </div>
+  </form>
+</section>
+<div class="hint">Tip: paste a link — previews are live. The “Brief” you write here is what voters will read. If a card looks blank, that site blocks embedding; click it to open the real site.</div>
+
+<main id="grid"></main>
+
+<div class="empty" id="empty" style="display:none">
+  <div class="ic">🚀</div>
+  <h2>No student sites yet</h2>
+  <p>Add your first one above — paste a student's website link and it appears instantly as a live preview inside a browser screen. Everything is saved in this browser.</p>
+</div>
+
+<footer>
+  <div class="foot">
+    <span>LFCD AI Academy · saved locally in your browser</span>
+    <span class="spacer"></span>
+    <button class="btn sm" id="qrBtn" style="border-color:rgba(37,99,235,.45);color:var(--accent);font-weight:600">▦ Voting QR &amp; page</button>
+    <button class="btn ghost sm" id="sitesJsonBtn">⬇ Voting list (sites.json)</button>
+    <button class="btn ghost sm" id="exportBtn">⬇ Export backup</button>
+    <button class="btn ghost sm" id="importBtn">⬆ Import</button>
+    <input type="file" id="importFile" accept="application/json" style="display:none" />
+  </div>
+</footer>
+
+<div class="modal" id="qrModal">
+  <div class="sheet">
+    <button class="x" id="qrClose" aria-label="Close">✕</button>
+    <h3>Voting QR code</h3>
+    <p class="m-sub">Paste the public link to your published <b>vote.html</b>, then create a QR code to print or share. Scanning it opens the voting page showing every project's brief.</p>
+    <div class="m-row">
+      <input id="voteUrl" type="text" value="https://actuatorsos.github.io/Project-Exhibition/vote.html" placeholder="https://actuatorsos.github.io/Project-Exhibition/vote.html" />
+      <button class="btn primary sm" id="qrGen">Create</button>
+    </div>
+    <div class="qr-wrap" id="qrWrap" style="display:none">
+      <img id="qrImg" alt="Voting QR code" />
+      <div class="qr-link" id="qrHint"></div>
+      <div class="qr-actions">
+        <button class="btn ghost sm" id="qrPng">Open image</button>
+        <button class="btn ghost sm" id="qrSvg">Print version (SVG)</button>
+        <button class="btn ghost sm" id="qrCopy">Copy link</button>
+      </div>
+      <p class="m-note">To save: open the image, then right-click → Save Image (or long-press on a phone).</p>
+    </div>
+    <p class="m-note" style="margin-top:14px">Not published yet? Click <b>Voting list (sites.json)</b>, then upload that file next to <b>vote.html</b> on any free host (Netlify Drop, GitHub Pages…). Ask me and I'll walk you through it.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "3dtitans.sites.v1";
+  var sites = [];
+  var editingId = null;
+  var query = "";
+
+  var $ = function(s){ return document.querySelector(s); };
+  var grid = $("#grid"), empty = $("#empty"), countEl = $("#count");
+  var form = $("#addForm"), nameI = $("#name"), urlI = $("#url"), descI = $("#desc");
+  var submitBtn = $("#submitBtn"), cancelBtn = $("#cancelEdit"), searchI = $("#search");
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(raw){ var a = JSON.parse(raw); if(Array.isArray(a)) return a; }
+    }catch(e){}
+    return seed();
+  }
+  function seed(){
+    return [
+      { id:uid(), name:"Example Domain", url:"https://example.com", desc:"Demo card — delete me when you add real students." },
+      { id:uid(), name:"The First Website (CERN)", url:"https://info.cern.ch", desc:"Demo card — the world's first web page." }
+    ];
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(sites)); }
+    catch(e){ alert("Could not save in this browser. Use Export to keep a backup."); }
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  function normalizeUrl(raw){
+    var u = (raw||"").trim();
+    if(!u) return null;
+    if(!/^https?:\/\//i.test(u)) u = "https://" + u;
+    try{ var p = new URL(u); return p.href; }catch(e){ return null; }
+  }
+  function hostOf(url){ try{ return new URL(url).host; }catch(e){ return url; } }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+
+  function render(){
+    var q = query.toLowerCase();
+    var list = sites.filter(function(s){
+      if(!q) return true;
+      return (s.name+" "+s.url+" "+(s.desc||"")).toLowerCase().indexOf(q) !== -1;
+    });
+
+    countEl.innerHTML = "<b>" + sites.length + "</b> " + (sites.length===1?"site":"sites");
+    grid.innerHTML = "";
+    empty.style.display = sites.length === 0 ? "block" : "none";
+
+    list.forEach(function(s){
+      var host = hostOf(s.url);
+      var fav = "https://icons.duckduckgo.com/ip3/" + encodeURIComponent(host) + ".ico";
+      var card = document.createElement("article");
+      card.className = "card";
+      card.innerHTML =
+        '<div class="screen">' +
+          '<div class="chrome">' +
+            '<div class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>' +
+            '<div class="addr">' +
+              '<img class="fav" src="'+esc(fav)+'" alt="" referrerpolicy="no-referrer" onerror="this.style.visibility=\'hidden\'"/>' +
+              '<svg class="lock" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>' +
+              '<span>'+esc(host)+'</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="viewport">' +
+            '<div class="fallback"><b>'+esc(s.name)+'</b><small>Live preview unavailable — click to open ↗</small></div>' +
+            '<iframe loading="lazy" referrerpolicy="no-referrer" ' +
+              'sandbox="allow-scripts allow-same-origin allow-popups allow-forms" ' +
+              'src="'+esc(s.url)+'"></iframe>' +
+            '<a class="clicklayer" href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">' +
+              '<span class="open-hint">Open live ↗</span>' +
+            '</a>' +
+          '</div>' +
+        '</div>' +
+        '<div class="meta">' +
+          '<h3>'+esc(s.name)+'</h3>' +
+          (s.desc ? '<p class="desc">'+esc(s.desc)+'</p>' : '<p class="desc" style="opacity:.5">No brief yet</p>') +
+          '<div class="actions">' +
+            '<a class="btn sm open" href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">Open ↗</a>' +
+            '<button class="btn sm ghost" data-edit="'+s.id+'">Edit</button>' +
+            '<button class="btn sm ghost danger" data-del="'+s.id+'">Delete</button>' +
+          '</div>' +
+        '</div>';
+      grid.appendChild(card);
+
+      var vp = card.querySelector(".viewport");
+      fit(vp);
+      if(window.ResizeObserver){ new ResizeObserver(function(){ fit(vp); }).observe(vp); }
+    });
+  }
+
+  function fit(vp){
+    var iframe = vp.querySelector("iframe");
+    if(!iframe) return;
+    var w = vp.clientWidth || 330;
+    var h = vp.clientHeight || 212;
+    var DESIGN_W = 1280;
+    var scale = w / DESIGN_W;
+    iframe.style.width = DESIGN_W + "px";
+    iframe.style.height = (h / scale) + "px";
+    iframe.style.transform = "scale(" + scale + ")";
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var url = normalizeUrl(urlI.value);
+    if(!url){ urlI.focus(); urlI.style.borderColor = "var(--danger)"; return; }
+    urlI.style.borderColor = "";
+    var name = nameI.value.trim() || hostOf(url);
+    var desc = descI.value.trim();
+
+    if(editingId){
+      sites = sites.map(function(s){ return s.id === editingId ? { id:s.id, name:name, url:url, desc:desc } : s; });
+      stopEdit();
+    }else{
+      sites.unshift({ id:uid(), name:name, url:url, desc:desc });
+    }
+    save(); render();
+    form.reset(); nameI.focus();
+  });
+
+  function startEdit(id){
+    var s = sites.find(function(x){ return x.id === id; });
+    if(!s) return;
+    editingId = id;
+    nameI.value = s.name; urlI.value = s.url; descI.value = s.desc || "";
+    submitBtn.innerHTML = "Save changes";
+    cancelBtn.style.display = "";
+    window.scrollTo({ top:0, behavior:"smooth" });
+    nameI.focus();
+  }
+  function stopEdit(){
+    editingId = null;
+    submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add';
+    cancelBtn.style.display = "none";
+    form.reset();
+  }
+  cancelBtn.addEventListener("click", stopEdit);
+
+  grid.addEventListener("click", function(e){
+    var ed = e.target.closest("[data-edit]");
+    var dl = e.target.closest("[data-del]");
+    if(ed){ startEdit(ed.getAttribute("data-edit")); }
+    else if(dl){
+      var id = dl.getAttribute("data-del");
+      var s = sites.find(function(x){ return x.id === id; });
+      if(s && confirm('Remove "' + s.name + '" from the showcase?')){
+        sites = sites.filter(function(x){ return x.id !== id; });
+        if(editingId === id) stopEdit();
+        save(); render();
+      }
+    }
+  });
+
+  searchI.addEventListener("input", function(){ query = searchI.value; render(); });
+
+  $("#exportBtn").addEventListener("click", function(){
+    var blob = new Blob([JSON.stringify(sites, null, 2)], { type:"application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "lfcd-ai-academy-sites.json";
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+  $("#importBtn").addEventListener("click", function(){ $("#importFile").click(); });
+  $("#importFile").addEventListener("change", function(e){
+    var file = e.target.files[0]; if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var data = JSON.parse(reader.result);
+        if(!Array.isArray(data)) throw 0;
+        var clean = data.filter(function(d){ return d && d.url; }).map(function(d){
+          return { id: d.id || uid(), name: d.name || hostOf(d.url), url: d.url, desc: d.desc || "" };
+        });
+        var replace = confirm("Import " + clean.length + " sites.\n\nOK = replace current list\nCancel = add to current list");
+        sites = replace ? clean : sites.concat(clean);
+        save(); render();
+      }catch(err){ alert("That file doesn't look like a valid backup."); }
+      e.target.value = "";
+    };
+    reader.readAsText(file);
+  });
+
+  // ---------- voting page: sites.json export ----------
+  $("#sitesJsonBtn").addEventListener("click", function(){
+    var clean = sites.map(function(s){ return { id:s.id, name:s.name, url:s.url, desc:s.desc||"" }; });
+    var blob = new Blob([JSON.stringify(clean, null, 2)], { type:"application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "sites.json"; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  // ---------- voting QR modal ----------
+  var modal = $("#qrModal"), urlInput = $("#voteUrl"), qrImg = $("#qrImg"),
+      qrWrap = $("#qrWrap"), qrHint = $("#qrHint");
+
+  function openModal(){ modal.classList.add("show"); setTimeout(function(){ urlInput.focus(); }, 50); }
+  function closeModal(){ modal.classList.remove("show"); }
+  $("#qrBtn").addEventListener("click", openModal);
+  $("#qrClose").addEventListener("click", closeModal);
+  modal.addEventListener("click", function(e){ if(e.target === modal) closeModal(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
+
+  function makeQR(){
+    var u = (urlInput.value || "").trim();
+    if(!u){ urlInput.focus(); return; }
+    if(!/^https?:\/\//i.test(u)) u = "https://" + u;
+    var enc = encodeURIComponent(u);
+    qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=460x460&margin=16&data=" + enc;
+    qrImg.setAttribute("data-svg", "https://api.qrserver.com/v1/create-qr-code/?format=svg&size=700x700&margin=16&data=" + enc);
+    qrHint.textContent = u;
+    qrWrap.style.display = "block";
+  }
+  $("#qrGen").addEventListener("click", makeQR);
+  urlInput.addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); makeQR(); } });
+  $("#qrPng").addEventListener("click", function(){ if(qrImg.src) window.open(qrImg.src, "_blank"); });
+  $("#qrSvg").addEventListener("click", function(){ var s = qrImg.getAttribute("data-svg"); if(s) window.open(s, "_blank"); });
+  $("#qrCopy").addEventListener("click", function(){
+    var u = qrHint.textContent || urlInput.value;
+    if(navigator.clipboard){ navigator.clipboard.writeText(u); }
+    var btn = $("#qrCopy"); btn.textContent = "Copied!";
+    setTimeout(function(){ btn.textContent = "Copy link"; }, 1300);
+  });
+
+  var rT;
+  window.addEventListener("resize", function(){
+    clearTimeout(rT);
+    rT = setTimeout(function(){ document.querySelectorAll(".viewport").forEach(fit); }, 150);
+  });
+
+  sites = load();
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "demo1",
+    "name": "Example Domain",
+    "url": "https://example.com",
+    "desc": "Demo project — replace this file with your real students: open admin.html, add sites, then click 'Voting list (sites.json)' and upload the result here."
+  },
+  {
+    "id": "demo2",
+    "name": "The First Website (CERN)",
+    "url": "https://info.cern.ch",
+    "desc": "Demo project — the world's first web page, by Tim Berners-Lee."
+  }
+]
