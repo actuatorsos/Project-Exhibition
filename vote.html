@@ -127,6 +127,7 @@
       <p>Project Voting</p>
     </div>
     <div class="spacer"></div>
+    <a href="./" style="font-size:12.5px;color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap;margin-right:4px" aria-label="Back to the gallery">← Gallery</a>
     <div class="status" id="status"><span class="dot"></span><span id="statusText">Connecting…</span></div>
   </div>
 </header>
@@ -183,6 +184,8 @@
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
   function hostOf(u){ try{ return new URL(u).host; }catch(e){ return u; } }
+  // Only allow http/https — blocks javascript:, data:, etc. from links and iframes.
+  function safeUrl(u){ try{ var p = new URL(u); return (p.protocol==="http:"||p.protocol==="https:") ? p.href : "about:blank"; }catch(e){ return "about:blank"; } }
   function keyFor(s){ return encodeURIComponent(String(s.id||s.url)); }
 
   function loadLocalCounts(){ try{ return JSON.parse(localStorage.getItem(CKEY))||{}; }catch(e){ return {}; } }
@@ -269,6 +272,7 @@
       var pct = Math.round((c/max)*100);
       var host = hostOf(s.url);
       var fav = "https://icons.duckduckgo.com/ip3/" + encodeURIComponent(host) + ".ico";
+      var safe = safeUrl(s.url);
       var isVoted = votedId === s.id;
       var medal = idx===0?"🥇":idx===1?"🥈":idx===2?"🥉":"";
       var rankTxt = medal ? '<span class="medal">'+medal+'</span> #'+(idx+1) : '#'+(idx+1);
@@ -283,8 +287,8 @@
           '</div>' +
           '<div class="viewport">' +
             '<div class="fallback"><b>'+esc(s.name)+'</b><span>Tap to open the live site ↗</span></div>' +
-            '<iframe loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-popups allow-forms" src="'+esc(s.url)+'"></iframe>' +
-            '<a class="open-cta" href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">Open ↗</a>' +
+            '<iframe loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin" src="'+esc(safe)+'"></iframe>' +
+            '<a class="open-cta" href="'+esc(safe)+'" target="_blank" rel="noopener noreferrer">Open ↗</a>' +
           '</div>' +
         '</div>' +
         '<div class="body">' +
@@ -296,7 +300,7 @@
           '<div class="row">' +
             '<button class="vote'+(isVoted?' done':'')+'" data-vote="'+esc(s.id)+'"'+((votedId&&!isVoted)?' disabled':'')+'>' +
               (isVoted?'✓ You voted':'★ Vote') + '</button>' +
-            '<a class="open" href="'+esc(s.url)+'" target="_blank" rel="noopener noreferrer">Visit</a>' +
+            '<a class="open" href="'+esc(safe)+'" target="_blank" rel="noopener noreferrer">Visit</a>' +
           '</div>' +
         '</div>';
       listEl.appendChild(el);
