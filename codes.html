@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Voting Tickets — LFCD AI Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#fff6ec; --bg2:#ffffff; --panel:#ffffff;
+    --ink:#241a3d;
+    --border:rgba(36,26,61,.14); --border2:rgba(36,26,61,.08);
+    --text:#241a3d; --muted:#6e6291; --muted2:#a89fc4;
+    --pink:#ec4899; --orange:#fb923c; --yellow:#fbbf24; --purple:#8b5cf6; --cyan:#22d3ee; --green:#10b981;
+    --grad:linear-gradient(115deg,#8b5cf6 0%,#ec4899 48%,#fb923c 100%);
+    --pop:6px 6px 0 rgba(36,26,61,.10);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:'Nunito',system-ui,-apple-system,sans-serif;
+    background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+
+  header{
+    position:sticky;top:0;z-index:40;
+    background:linear-gradient(180deg, rgba(255,250,243,.95), rgba(255,250,243,.82));
+    backdrop-filter:blur(14px);border-bottom:2px solid var(--border2);
+  }
+  .bar{max-width:1000px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+  .logo{
+    width:42px;height:42px;border-radius:14px;flex:none;background:var(--grad);
+    display:grid;place-items:center;color:#fff;font-weight:700;font-family:'Fredoka',sans-serif;font-size:15px;
+    transform:rotate(-6deg);box-shadow:3px 3px 0 rgba(236,72,153,.25);
+  }
+  .htxt h1{margin:0;font-family:'Fredoka',sans-serif;font-size:17px;font-weight:600}
+  .htxt h1 b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .htxt p{margin:1px 0 0;font-size:12px;color:var(--muted);font-weight:700}
+  .spacer{flex:1}
+  .back{font-size:12.5px;color:var(--purple);font-weight:800;white-space:nowrap}
+
+  .wrap{max-width:1000px;margin:0 auto;padding:20px}
+
+  .panel{
+    background:var(--panel);border:2px solid var(--border);border-radius:24px;padding:20px;
+    box-shadow:var(--pop);margin-bottom:18px;
+  }
+  .panel h2{margin:0 0 6px;font-family:'Fredoka',sans-serif;font-size:20px;font-weight:600}
+  .panel .sub{margin:0 0 16px;color:var(--muted);font-size:13.5px;line-height:1.55;font-weight:700}
+  .panel .sub b{color:var(--text)}
+
+  .controls{display:grid;grid-template-columns:2fr 1fr 2fr auto;gap:10px;align-items:end}
+  .field{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .field label{font-size:11px;color:var(--purple);letter-spacing:.6px;text-transform:uppercase;font-weight:900}
+  .field input{
+    background:var(--bg);border:2px solid var(--border);border-radius:13px;
+    padding:11px 14px;color:var(--text);font-size:14px;outline:none;transition:.15s;width:100%;
+    font-family:'Nunito',sans-serif;font-weight:700;
+  }
+  .field input:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(236,72,153,.14);background:#fff}
+  .btn{
+    font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;
+    border-radius:999px;padding:12px 20px;border:2px solid var(--border);
+    background:var(--bg2);color:var(--text);transition:.18s;white-space:nowrap;
+    display:inline-flex;align-items:center;gap:7px;
+  }
+  .btn:hover{border-color:var(--purple);transform:translateY(-2px);box-shadow:0 4px 0 rgba(139,92,246,.25)}
+  .btn:active{transform:translateY(0);box-shadow:none}
+  .btn.primary{background:var(--grad);color:#fff;border:none;box-shadow:0 5px 0 rgba(190,60,140,.35)}
+  .btn.primary:hover{filter:brightness(1.06);transform:translateY(-2px)}
+  .steps{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .step{
+    flex:1;min-width:200px;display:flex;gap:9px;align-items:flex-start;
+    background:var(--bg);border:2px solid var(--border2);border-radius:14px;padding:10px 12px;
+    font-size:12.5px;font-weight:800;color:var(--muted);line-height:1.45;
+  }
+  .step b.n{
+    width:24px;height:24px;flex:none;border-radius:50%;display:grid;place-items:center;
+    color:#fff;font-size:12px;font-family:'Fredoka',sans-serif;margin-top:1px;
+  }
+  .step:nth-child(1) b.n{background:var(--purple)}
+  .step:nth-child(2) b.n{background:var(--pink)}
+  .step:nth-child(3) b.n{background:var(--orange)}
+
+  .toolrow{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:4px}
+  .pillinfo{font-size:12.5px;font-weight:800;color:var(--muted);border:2px solid var(--border);border-radius:999px;padding:7px 13px;background:var(--bg2)}
+  .pillinfo b{color:var(--pink)}
+
+  /* ---------- SQL box ---------- */
+  .sqlbox{display:none;margin-top:14px}
+  .sqlbox.show{display:block}
+  .sqlbox textarea{
+    width:100%;height:130px;resize:vertical;background:#241a3d;color:#d6f5e8;border:none;border-radius:15px;
+    padding:14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5;outline:none;
+  }
+  .sqlbox p{margin:8px 0 0;font-size:12px;color:var(--muted2);font-weight:700}
+
+  /* ---------- Tickets ---------- */
+  .tickets{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .ticket{
+    background:#fff;border:2px dashed rgba(36,26,61,.30);border-radius:18px;padding:14px;
+    display:flex;gap:13px;align-items:center;page-break-inside:avoid;break-inside:avoid;
+  }
+  .ticket .qr{width:104px;height:104px;flex:none;border-radius:10px;background:#f4eefc}
+  .ticket .tx{min-width:0;flex:1}
+  .ticket .ev{font-family:'Fredoka',sans-serif;font-size:13px;font-weight:600;margin:0 0 2px}
+  .ticket .how{font-size:10.5px;color:var(--muted);font-weight:700;line-height:1.45;margin:0 0 7px}
+  .ticket .code{
+    font-family:'Fredoka',sans-serif;font-weight:600;font-size:22px;letter-spacing:4px;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .ticket .lbl{font-size:9.5px;letter-spacing:1px;color:var(--muted2);font-weight:900;text-transform:uppercase;margin-top:1px}
+  .empty-note{color:var(--muted2);font-weight:700;text-align:center;padding:30px 0;font-size:14px}
+
+  footer{max-width:1000px;margin:0 auto;padding:8px 20px 40px;color:var(--muted2);font-size:12px;text-align:center;font-weight:700}
+
+  @media (max-width:760px){ .controls{grid-template-columns:1fr 1fr} }
+
+  /* ---------- Print ---------- */
+  @media print{
+    body{background:#fff}
+    header, .panel, footer, .no-print{display:none !important}
+    .wrap{max-width:none;padding:0}
+    .tickets{grid-template-columns:1fr 1fr;gap:8mm}
+    .ticket{border:1.5px dashed #888;border-radius:12px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="logo">AI</div>
+    <div class="htxt">
+      <h1>LFCD <b>AI Academy</b></h1>
+      <p>Voting Ticket Maker 🎟</p>
+    </div>
+    <div class="spacer"></div>
+    <a class="back" href="./">← Gallery</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="panel">
+    <h2>Print one-time voting tickets</h2>
+    <p class="sub">Each ticket has a <b>unique code that works exactly once</b> — that's what keeps the vote fair. Hand one ticket to each voter. Scanning the QR opens the voting page with the code already filled in; they just pick their 3 favorites and submit.</p>
+    <div class="controls">
+      <div class="field">
+        <label for="voteUrl">Voting page link (your published vote.html)</label>
+        <input id="voteUrl" type="text" placeholder="https://your-project.vercel.app/vote.html" />
+      </div>
+      <div class="field">
+        <label for="num">How many tickets</label>
+        <input id="num" type="number" min="1" max="500" value="40" />
+      </div>
+      <div class="field">
+        <label for="eventName">Event name (printed on tickets)</label>
+        <input id="eventName" type="text" value="LFCD AI Academy — Project Vote" />
+      </div>
+      <button class="btn primary" id="genBtn">✨ Generate</button>
+    </div>
+    <div class="steps">
+      <div class="step"><b class="n">1</b><span>Generate, then click <b>Copy SQL</b> and paste it in <b>Supabase → SQL Editor → Run</b>. This activates the codes (without this step they won't be accepted).</span></div>
+      <div class="step"><b class="n">2</b><span>Click <b>Print tickets</b>, cut them out, and give one per person.</span></div>
+      <div class="step"><b class="n">3</b><span>Voters scan their own ticket, pick 3 sites, and submit. Each code = one ballot, enforced by the database.</span></div>
+    </div>
+    <div class="toolrow" id="tools" style="display:none">
+      <span class="pillinfo"><b id="countInfo">0</b> tickets ready</span>
+      <button class="btn" id="printBtn">🖨 Print tickets</button>
+      <button class="btn" id="sqlBtn">📋 Copy SQL for Supabase</button>
+      <button class="btn" id="csvBtn">⬇ Download CSV</button>
+      <button class="btn" id="showSqlBtn">👀 Show SQL</button>
+    </div>
+    <div class="sqlbox" id="sqlBox">
+      <textarea id="sqlText" readonly spellcheck="false"></textarea>
+      <p>Paste this whole block into Supabase → SQL Editor and press Run. Codes already in the database are skipped safely.</p>
+    </div>
+  </div>
+
+  <div class="tickets" id="tickets">
+    <div class="empty-note">Your printable tickets will appear here ✂️</div>
+  </div>
+</div>
+
+<footer class="no-print">LFCD AI Academy · keep this page for teachers only — anyone with these codes can vote</footer>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(s){ return document.querySelector(s); };
+  var SETTINGS_KEY = "lfcd.tickets.settings.v1";
+  // No 0/O/1/I/L — every character is unambiguous when printed.
+  var ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+  var CODE_LEN = 6;
+
+  var voteUrlI = $("#voteUrl"), numI = $("#num"), eventI = $("#eventName"),
+      ticketsEl = $("#tickets"), tools = $("#tools"), countInfo = $("#countInfo"),
+      sqlBox = $("#sqlBox"), sqlText = $("#sqlText");
+  var codes = [];
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+
+  function randomCode(){
+    var out = "";
+    var buf = new Uint32Array(CODE_LEN);
+    (window.crypto||window.msCrypto).getRandomValues(buf);
+    for(var i=0;i<CODE_LEN;i++) out += ALPHABET[buf[i] % ALPHABET.length];
+    return out;
+  }
+  function makeCodes(n){
+    var set = {};
+    var list = [];
+    while(list.length < n){
+      var c = randomCode();
+      if(!set[c]){ set[c] = 1; list.push(c); }
+    }
+    return list;
+  }
+
+  function normalizeUrl(raw){
+    var u = (raw||"").trim();
+    if(!u) return "";
+    if(!/^https?:\/\//i.test(u)) u = "https://" + u;
+    try{ return new URL(u).href; }catch(e){ return ""; }
+  }
+  function ticketLink(base, code){
+    if(!base) return "";
+    return base + (base.indexOf("?") !== -1 ? "&" : "?") + "code=" + code;
+  }
+  function qrSrc(data){
+    return "https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=" + encodeURIComponent(data);
+  }
+
+  function saveSettings(){
+    try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify({ url: voteUrlI.value, ev: eventI.value, n: numI.value })); }catch(e){}
+  }
+  function loadSettings(){
+    try{
+      var s = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+      if(s){ if(s.url) voteUrlI.value = s.url; if(s.ev) eventI.value = s.ev; if(s.n) numI.value = s.n; }
+    }catch(e){}
+    if(!voteUrlI.value){
+      // sensible default: vote.html next to this page
+      try{ voteUrlI.value = new URL("vote.html", location.href).href; }catch(e){}
+    }
+  }
+
+  function generate(){
+    var n = Math.max(1, Math.min(500, parseInt(numI.value, 10) || 40));
+    numI.value = n;
+    var base = normalizeUrl(voteUrlI.value);
+    var ev = eventI.value.trim() || "Project Vote";
+    saveSettings();
+
+    codes = makeCodes(n);
+    ticketsEl.innerHTML = codes.map(function(c){
+      var link = ticketLink(base, c);
+      var qr = link ? '<img class="qr" src="'+esc(qrSrc(link))+'" alt="QR for voting" loading="lazy" />'
+                    : '<div class="qr" style="display:grid;place-items:center;font-size:11px;color:#a89fc4;font-weight:800;text-align:center;padding:8px">Add the voting link to get QR codes</div>';
+      return '<div class="ticket">' +
+        qr +
+        '<div class="tx">' +
+          '<p class="ev">🗳️ '+esc(ev)+'</p>' +
+          '<p class="how">Scan the code (or open the voting page) → pick your <b>3 favorite</b> websites → submit with this code:</p>' +
+          '<div class="code">'+esc(c)+'</div>' +
+          '<div class="lbl">One-time voting code</div>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+
+    countInfo.textContent = String(n);
+    tools.style.display = "flex";
+    sqlText.value = buildSql();
+  }
+
+  function buildSql(){
+    if(!codes.length) return "";
+    var values = codes.map(function(c){ return "('" + c + "')"; }).join(",\n  ");
+    return "-- Activate " + codes.length + " voting tickets (generated " + new Date().toLocaleString() + ")\n" +
+      "insert into public.vote_codes (code) values\n  " + values + "\non conflict (code) do nothing;";
+  }
+
+  $("#genBtn").addEventListener("click", generate);
+  $("#printBtn").addEventListener("click", function(){ window.print(); });
+  $("#showSqlBtn").addEventListener("click", function(){
+    sqlBox.classList.toggle("show");
+    this.textContent = sqlBox.classList.contains("show") ? "🙈 Hide SQL" : "👀 Show SQL";
+  });
+  $("#sqlBtn").addEventListener("click", function(){
+    var sql = buildSql(); if(!sql) return;
+    var btn = this;
+    function done(){ btn.textContent = "✅ Copied — paste in Supabase"; setTimeout(function(){ btn.textContent = "📋 Copy SQL for Supabase"; }, 2200); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(sql).then(done, function(){ sqlBox.classList.add("show"); sqlText.select(); });
+    }else{
+      sqlBox.classList.add("show"); sqlText.select();
+      try{ document.execCommand("copy"); done(); }catch(e){}
+    }
+  });
+  $("#csvBtn").addEventListener("click", function(){
+    if(!codes.length) return;
+    var base = normalizeUrl(voteUrlI.value);
+    var rows = ["code,link"].concat(codes.map(function(c){ return c + "," + ticketLink(base, c); }));
+    var blob = new Blob([rows.join("\n")], { type:"text/csv" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "voting-tickets.csv"; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  loadSettings();
+})();
+</script>
+</body>
+</html>
