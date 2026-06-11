@@ -406,12 +406,24 @@
     else { statusEl.className="status local"; statusText.textContent="Practice mode"; }
   }
 
-  // ---------- data ----------
+  // ---------- data (shared database first, then sites.json, then demo) ----------
+  function loadSitesFromDb(){
+    if(!LIVE) return Promise.reject(new Error("not configured"));
+    return fetch(SUPABASE_URL + "/rest/v1/sites?select=id,name,url,brief&order=created_at.desc", { headers: sbHeaders() })
+      .then(function(r){ if(!r.ok) throw new Error("bad " + r.status); return r.json(); })
+      .then(function(rows){
+        if(!Array.isArray(rows) || !rows.length) throw new Error("empty");
+        return rows.map(function(d){ return { id:d.id, name:d.name, url:d.url, desc:d.brief||"" }; });
+      });
+  }
   function loadSites(){
-    return fetch("./sites.json", {cache:"no-store"})
-      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
-      .then(function(a){ if(!Array.isArray(a)||!a.length) throw 0; return a; })
-      .catch(function(){ return DEMO; })
+    return loadSitesFromDb()
+      .catch(function(){
+        return fetch("./sites.json", {cache:"no-store"})
+          .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+          .then(function(a){ if(!Array.isArray(a)||!a.length) throw 0; return a; })
+          .catch(function(){ return DEMO; });
+      })
       .then(function(a){
         sites = a.filter(function(d){ return d && d.url; }).map(function(d,i){
           return { id: String(d.id||("s"+i)), name: d.name||hostOf(d.url), url: d.url, desc: d.desc||"" };

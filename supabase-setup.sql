@@ -117,8 +117,93 @@ grant select on public.vote_results to anon, authenticated;
 --   truncate public.ballots; update public.vote_codes set used_at = null;
 
 -- ============================================================
---  Cleanup from the OLD setup (only if you ran the previous
---  version of this file). Safe to skip otherwise.
+--  PART 2 — Shared project list (the +Add button saves here)
+--  Re-running this whole file is always safe (idempotent).
+-- ============================================================
+
+-- 5) The projects everyone sees (replaces sites.json as the source of truth)
+create table if not exists public.sites (
+  id         text primary key default replace(gen_random_uuid()::text, '-', ''),
+  name       text not null default '',
+  url        text not null,
+  brief      text not null default '',
+  created_at timestamptz not null default now()
+);
+alter table public.sites enable row level security;
+drop policy if exists "public read sites" on public.sites;
+create policy "public read sites" on public.sites for select using (true);
+-- No public insert/update/delete: changes only happen through the
+-- passcode-protected functions below.
+
+-- 6) Teacher passcode (kept in a table nobody can read from the website)
+create table if not exists public.teacher_secret ( pass text primary key );
+alter table public.teacher_secret enable row level security;
+-- Sets the initial passcode ONLY if none exists yet.
+-- To change it later:  update public.teacher_secret set pass = 'MY-NEW-PASS';
+insert into public.teacher_secret (pass)
+select 'LFCD-SAZK-G3WF'
+where not exists (select 1 from public.teacher_secret);
+
+-- 7) Teacher actions (each checks the passcode first)
+create or replace function public.site_add(p_pass text, p_name text, p_url text, p_brief text)
+returns text language plpgsql security definer set search_path = public as $$
+declare v_id text;
+begin
+  if not exists (select 1 from public.teacher_secret where pass = p_pass) then return 'ERR_PASS'; end if;
+  if p_url is null or p_url !~* '^https?://' or length(p_url) > 500
+     or length(coalesce(p_name,'')) > 120 or length(coalesce(p_brief,'')) > 500 then
+    return 'ERR_INPUT';
+  end if;
+  insert into public.sites (name, url, brief)
+  values (trim(coalesce(p_name,'')), trim(p_url), trim(coalesce(p_brief,'')))
+  returning id into v_id;
+  return v_id;
+end; $$;
+
+create or replace function public.site_update(p_pass text, p_id text, p_name text, p_url text, p_brief text)
+returns text language plpgsql security definer set search_path = public as $$
+begin
+  if not exists (select 1 from public.teacher_secret where pass = p_pass) then return 'ERR_PASS'; end if;
+  if p_url is null or p_url !~* '^https?://' or length(p_url) > 500
+     or length(coalesce(p_name,'')) > 120 or length(coalesce(p_brief,'')) > 500 then
+    return 'ERR_INPUT';
+  end if;
+  update public.sites
+     set name = trim(coalesce(p_name,'')), url = trim(p_url), brief = trim(coalesce(p_brief,''))
+   where id = p_id;
+  if not found then return 'ERR_NOTFOUND'; end if;
+  return 'OK';
+end; $$;
+
+create or replace function public.site_delete(p_pass text, p_id text)
+returns text language plpgsql security definer set search_path = public as $$
+begin
+  if not exists (select 1 from public.teacher_secret where pass = p_pass) then return 'ERR_PASS'; end if;
+  delete from public.sites where id = p_id;
+  if not found then return 'ERR_NOTFOUND'; end if;
+  return 'OK';
+end; $$;
+
+revoke all on function public.site_add(text,text,text,text) from public;
+revoke all on function public.site_update(text,text,text,text,text) from public;
+revoke all on function public.site_delete(text,text) from public;
+grant execute on function public.site_add(text,text,text,text) to anon, authenticated;
+grant execute on function public.site_update(text,text,text,text,text) to anon, authenticated;
+grant execute on function public.site_delete(text,text) to anon, authenticated;
+
+-- 8) Bring in the current 7 projects (skipped if they already exist)
+insert into public.sites (id, name, url, brief, created_at) values
+  ('mq9j9gj5ejkok', 'NBA Team',             'https://basketball-hub.replit.app/',             '(Nabil & Adam)',      now() - interval '7 minutes'),
+  ('mq9jb9z4o7o4u', 'The Hackers Team',     'https://chess-quest-farajabdulhafiz.replit.app/','(Laila & Sultan)',    now() - interval '6 minutes'),
+  ('mq9jcjfprtzxy', 'Chocolate Team',       'https://home-gadget-hub.replit.app/',            '(ghaith & Khaldoun)', now() - interval '5 minutes'),
+  ('mq9jem52cb8fj', 'Pokemon Legends Team', 'https://pokemon-spin-wheel.replit.app/',         '(Karam & Karim)',     now() - interval '4 minutes'),
+  ('mq9jh4hcjdhsq', 'NoName',               'https://fantasy-draft-buddy.replit.app/',        'Munzer Al-Akrami',    now() - interval '3 minutes'),
+  ('mq9jhw0ks8239', 'NoName',               'https://score-streak.replit.app/',               '(Talal & Marcio)',    now() - interval '2 minutes'),
+  ('mq9lzg1ekrfae', 'Yahya''s Website',     'https://yahyademeriah.com/',                     '',                    now() - interval '1 minute')
+on conflict (id) do nothing;
+
+-- ============================================================
+--  Cleanup from the very first setup (only if you ran the
+--  ORIGINAL version of this file long ago). Safe to skip.
 -- ============================================================
 -- drop function if exists public.increment_vote(uuid);
--- drop table if exists public.sites;
