@@ -117,6 +117,22 @@
 
   footer{max-width:1000px;margin:0 auto;padding:8px 20px 40px;color:var(--muted2);font-size:12px;text-align:center;font-weight:700}
 
+  /* ---------- Status + passcode modal ---------- */
+  .okpill{font-size:12.5px;font-weight:800;color:#047857;border:2px solid rgba(16,185,129,.5);border-radius:999px;padding:7px 13px;background:#ecfdf5}
+  .warnpill{font-size:12.5px;font-weight:800;color:#92400e;border:2px solid rgba(251,191,36,.5);border-radius:999px;padding:7px 13px;background:#fffbeb}
+  .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(36,26,61,.45);backdrop-filter:blur(4px)}
+  .modal.show{display:flex}
+  .sheet{position:relative;width:100%;max-width:430px;background:var(--panel);border:2px solid var(--border);border-radius:24px;padding:24px;box-shadow:10px 10px 0 rgba(36,26,61,.18)}
+  .sheet h3{margin:0 0 6px;font-family:'Fredoka',sans-serif;font-size:19px;font-weight:600}
+  .m-sub{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.55;font-weight:600}
+  .m-row{display:flex;gap:8px}
+  .m-row input{flex:1;min-width:0;background:var(--bg);border:2px solid var(--border);border-radius:13px;padding:11px 13px;color:var(--text);font-size:14px;outline:none;font-family:'Nunito',sans-serif;font-weight:700}
+  .m-row input:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(236,72,153,.14);background:#fff}
+  .x{position:absolute;top:14px;right:14px;border:none;background:none;color:var(--muted2);font-size:17px;cursor:pointer;line-height:1}
+  .x:hover{color:var(--text)}
+  .m-err{margin:10px 0 0;font-size:12.5px;color:#ef4444;font-weight:800;display:none}
+  .m-err.show{display:block}
+
   @media (max-width:760px){ .controls{grid-template-columns:1fr 1fr} }
 
   /* ---------- Print ---------- */
@@ -164,16 +180,18 @@
       <button class="btn primary" id="genBtn">✨ Generate</button>
     </div>
     <div class="steps">
-      <div class="step"><b class="n">1</b><span>Generate, then click <b>Copy SQL</b> and paste it in <b>Supabase → SQL Editor → Run</b>. This activates the codes (without this step they won't be accepted).</span></div>
-      <div class="step"><b class="n">2</b><span>Click <b>Print tickets</b>, cut them out, and give one per person.</span></div>
-      <div class="step"><b class="n">3</b><span>Voters scan their own ticket, pick 3 sites, and submit. Each code = one ballot, enforced by the database.</span></div>
+      <div class="step"><b class="n">1</b><span><b>Generate</b> your tickets below.</span></div>
+      <div class="step"><b class="n">2</b><span>Click <b>⚡ Activate tickets</b> — this makes the codes valid for voting (asks for the teacher passcode once).</span></div>
+      <div class="step"><b class="n">3</b><span><b>Print</b>, cut them out, one per person. Voters scan their ticket, pick 3 sites, submit. Each code = one ballot.</span></div>
     </div>
     <div class="toolrow" id="tools" style="display:none">
       <span class="pillinfo"><b id="countInfo">0</b> tickets ready</span>
+      <span class="warnpill" id="actStatus">Not activated yet — voters can't use them</span>
+      <button class="btn primary" id="activateBtn">⚡ Activate tickets</button>
       <button class="btn" id="printBtn">🖨 Print tickets</button>
-      <button class="btn" id="sqlBtn">📋 Copy SQL for Supabase</button>
-      <button class="btn" id="csvBtn">⬇ Download CSV</button>
-      <button class="btn" id="showSqlBtn">👀 Show SQL</button>
+      <button class="btn ghost" id="csvBtn">⬇ CSV</button>
+      <button class="btn ghost" id="sqlBtn">📋 Copy SQL (backup way)</button>
+      <button class="btn ghost" id="showSqlBtn">👀 Show SQL</button>
     </div>
     <div class="sqlbox" id="sqlBox">
       <textarea id="sqlText" readonly spellcheck="false"></textarea>
@@ -186,6 +204,19 @@
   </div>
 </div>
 
+<div class="modal" id="passModal">
+  <div class="sheet">
+    <button class="x" id="passClose" aria-label="Close">✕</button>
+    <h3>Teacher passcode 🔑</h3>
+    <p class="m-sub">Activating tickets makes their codes valid for real voting, so it needs the teacher passcode. You'll only be asked once on this device.</p>
+    <div class="m-row">
+      <input id="passInput" type="password" placeholder="LFCD-····-····" autocomplete="off" spellcheck="false" />
+      <button class="btn primary" id="passSave">Unlock</button>
+    </div>
+    <p class="m-err" id="passErr"></p>
+  </div>
+</div>
+
 <footer class="no-print">LFCD AI Academy · keep this page for teachers only — anyone with these codes can vote</footer>
 
 <script>
@@ -193,14 +224,20 @@
   "use strict";
   var $ = function(s){ return document.querySelector(s); };
   var SETTINGS_KEY = "lfcd.tickets.settings.v1";
+  var PASS_KEY = "lfcd.teacher.pass";
+  /* Same database as the gallery and voting pages */
+  var SUPABASE_URL = "https://xrvmqhvkffgeyvtctaok.supabase.co";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhydm1xaHZrZmZnZXl2dGN0YW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExODEwNDcsImV4cCI6MjA5Njc1NzA0N30.LPF3ldLEjOxpMLuKm7uRLV_n0Dqdt3Y_POxaPTQpLT4";
   // No 0/O/1/I/L — every character is unambiguous when printed.
   var ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
   var CODE_LEN = 6;
 
   var voteUrlI = $("#voteUrl"), numI = $("#num"), eventI = $("#eventName"),
       ticketsEl = $("#tickets"), tools = $("#tools"), countInfo = $("#countInfo"),
-      sqlBox = $("#sqlBox"), sqlText = $("#sqlText");
+      sqlBox = $("#sqlBox"), sqlText = $("#sqlText"),
+      actStatus = $("#actStatus"), activateBtn = $("#activateBtn");
   var codes = [];
+  var activated = false;
 
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
@@ -276,7 +313,81 @@
     countInfo.textContent = String(n);
     tools.style.display = "flex";
     sqlText.value = buildSql();
+    setActivated(false);
   }
+
+  /* ---------- activation (makes codes valid for voting) ---------- */
+  function setActivated(on, extra){
+    activated = on;
+    if(on){
+      actStatus.className = "okpill";
+      actStatus.textContent = "✅ Activated — tickets are valid" + (extra || "");
+      activateBtn.disabled = true;
+      activateBtn.textContent = "✅ Activated";
+    }else{
+      actStatus.className = "warnpill";
+      actStatus.textContent = "Not activated yet — voters can't use them";
+      activateBtn.disabled = false;
+      activateBtn.innerHTML = "⚡ Activate tickets";
+    }
+  }
+
+  var passModal = $("#passModal"), passInput = $("#passInput"), passErr = $("#passErr");
+  var passPending = null;
+  function getPass(){ try{ return localStorage.getItem(PASS_KEY) || ""; }catch(e){ return ""; } }
+  function setPass(p){ try{ localStorage.setItem(PASS_KEY, p); }catch(e){} }
+  function clearPass(){ try{ localStorage.removeItem(PASS_KEY); }catch(e){} }
+  function ensurePass(then, errMsg){
+    var p = getPass();
+    if(p && !errMsg){ then(p); return; }
+    passPending = then;
+    passErr.textContent = errMsg || "";
+    passErr.className = "m-err" + (errMsg ? " show" : "");
+    passModal.classList.add("show");
+    setTimeout(function(){ passInput.focus(); }, 60);
+  }
+  $("#passSave").addEventListener("click", function(){
+    var p = passInput.value.trim();
+    if(!p){ passInput.focus(); return; }
+    setPass(p); passModal.classList.remove("show"); passInput.value = "";
+    var fn = passPending; passPending = null;
+    if(fn) fn(p);
+  });
+  passInput.addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); $("#passSave").click(); } });
+  $("#passClose").addEventListener("click", function(){ passModal.classList.remove("show"); passPending = null; });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape"){ passModal.classList.remove("show"); passPending = null; } });
+
+  function activate(){
+    if(!codes.length || activated) return;
+    ensurePass(function(p){
+      activateBtn.disabled = true;
+      activateBtn.textContent = "Activating…";
+      fetch(SUPABASE_URL + "/rest/v1/rpc/codes_add", {
+        method:"POST",
+        headers:{ "apikey":SUPABASE_ANON_KEY, "Authorization":"Bearer " + SUPABASE_ANON_KEY, "Content-Type":"application/json" },
+        body: JSON.stringify({ p_pass: p, p_codes: codes })
+      })
+      .then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function(res){
+        if(res === "ERR_PASS"){
+          clearPass(); setActivated(false);
+          ensurePass(function(){ activate(); }, "That passcode isn't right — try again.");
+          return;
+        }
+        if(typeof res === "string" && res.indexOf("OK:") === 0){
+          setActivated(true, " (" + res.slice(3) + " new)");
+        }else{
+          setActivated(false);
+          alert("Unexpected reply from the database — try again.");
+        }
+      })
+      .catch(function(){
+        setActivated(false);
+        alert("Can't reach the database — check your internet and try again.");
+      });
+    });
+  }
+  activateBtn.addEventListener("click", activate);
 
   function buildSql(){
     if(!codes.length) return "";
@@ -286,7 +397,10 @@
   }
 
   $("#genBtn").addEventListener("click", generate);
-  $("#printBtn").addEventListener("click", function(){ window.print(); });
+  $("#printBtn").addEventListener("click", function(){
+    if(!activated && !confirm("These tickets are NOT activated yet — voters can't use them until you click ⚡ Activate tickets.\n\nPrint anyway?")) return;
+    window.print();
+  });
   $("#showSqlBtn").addEventListener("click", function(){
     sqlBox.classList.toggle("show");
     this.textContent = sqlBox.classList.contains("show") ? "🙈 Hide SQL" : "👀 Show SQL";

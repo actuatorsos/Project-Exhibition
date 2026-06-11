@@ -191,7 +191,27 @@ grant execute on function public.site_add(text,text,text,text) to anon, authenti
 grant execute on function public.site_update(text,text,text,text,text) to anon, authenticated;
 grant execute on function public.site_delete(text,text) to anon, authenticated;
 
--- 8) Bring in the current 7 projects (skipped if they already exist)
+-- 8) Activate voting tickets straight from codes.html (teacher passcode required).
+--    Returns 'OK:<number-of-new-codes>' | 'ERR_PASS' | 'ERR_INPUT'
+create or replace function public.codes_add(p_pass text, p_codes text[])
+returns text language plpgsql security definer set search_path = public as $$
+declare v_n int := 0; v_c text;
+begin
+  if not exists (select 1 from public.teacher_secret where pass = p_pass) then return 'ERR_PASS'; end if;
+  if p_codes is null or array_length(p_codes, 1) is null or array_length(p_codes, 1) > 1000 then return 'ERR_INPUT'; end if;
+  foreach v_c in array p_codes loop
+    v_c := upper(trim(v_c));
+    if v_c ~ '^[A-Z0-9]{4,12}$' then
+      insert into public.vote_codes (code) values (v_c) on conflict (code) do nothing;
+      if found then v_n := v_n + 1; end if;
+    end if;
+  end loop;
+  return 'OK:' || v_n;
+end; $$;
+revoke all on function public.codes_add(text, text[]) from public;
+grant execute on function public.codes_add(text, text[]) to anon, authenticated;
+
+-- 9) Bring in the current 7 projects (skipped if they already exist)
 insert into public.sites (id, name, url, brief, created_at) values
   ('mq9j9gj5ejkok', 'NBA Team',             'https://basketball-hub.replit.app/',             '(Nabil & Adam)',      now() - interval '7 minutes'),
   ('mq9jb9z4o7o4u', 'The Hackers Team',     'https://chess-quest-farajabdulhafiz.replit.app/','(Laila & Sultan)',    now() - interval '6 minutes'),
