@@ -1,14 +1,44 @@
 [
   {
-    "id": "demo1",
-    "name": "Example Domain",
-    "url": "https://example.com",
-    "desc": "Demo project — replace this file with your real students: open admin.html, add sites, then click 'Voting list (sites.json)' and upload the result here."
+    "id": "mq9lzg1ekrfae",
+    "name": "Yahya's Website",
+    "url": "https://yahyademeriah.com/",
+    "desc": ""
   },
   {
-    "id": "demo2",
-    "name": "The First Website (CERN)",
-    "url": "https://info.cern.ch",
-    "desc": "Demo project — the world's first web page, by Tim Berners-Lee."
+    "id": "mq9jhw0ks8239",
+    "name": "NoName",
+    "url": "https://score-streak.replit.app/",
+    "desc": "(Talal & Marcio)"
+  },
+  {
+    "id": "mq9jh4hcjdhsq",
+    "name": "NoName",
+    "url": "https://fantasy-draft-buddy.replit.app/",
+    "desc": "Munzer Al-Akrami"
+  },
+  {
+    "id": "mq9jem52cb8fj",
+    "name": "Pokemon Legends Team",
+    "url": "https://pokemon-spin-wheel.replit.app/",
+    "desc": "(Karam & Karim)"
+  },
+  {
+    "id": "mq9jcjfprtzxy",
+    "name": "Chocolate Team",
+    "url": "https://home-gadget-hub.replit.app/",
+    "desc": "(ghaith & Khaldoun)"
+  },
+  {
+    "id": "mq9jb9z4o7o4u",
+    "name": "The Hackers Team",
+    "url": "https://chess-quest-farajabdulhafiz.replit.app/",
+    "desc": "(Laila & Sultan)"
+  },
+  {
+    "id": "mq9j9gj5ejkok",
+    "name": "NBA Team",
+    "url": "https://basketball-hub.replit.app/",
+    "desc": "(Nabil & Adam)"
   }
 ]
