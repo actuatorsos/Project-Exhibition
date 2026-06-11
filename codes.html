@@ -133,6 +133,24 @@
   .m-err{margin:10px 0 0;font-size:12.5px;color:#ef4444;font-weight:800;display:none}
   .m-err.show{display:block}
 
+  /* ---------- Ticket status grid ---------- */
+  .statbar{display:flex;gap:9px;flex-wrap:wrap;margin:2px 0 0}
+  .stat{flex:1;min-width:110px;background:var(--bg);border:2px solid var(--border2);border-radius:14px;padding:10px 12px;text-align:center}
+  .stat b{display:block;font-family:'Fredoka',sans-serif;font-size:22px;font-weight:600}
+  .stat span{font-size:11px;font-weight:900;color:var(--muted2);letter-spacing:.5px;text-transform:uppercase}
+  .stat.used b{color:#047857}
+  .stat.left b{color:var(--pink)}
+  .codegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:14px}
+  .codechip{
+    display:flex;align-items:center;justify-content:space-between;gap:6px;
+    border:2px solid var(--border);border-radius:12px;padding:8px 12px;background:#fff;
+    font-family:'Fredoka',sans-serif;font-weight:600;letter-spacing:2.5px;font-size:14.5px;
+  }
+  .codechip small{font-family:'Nunito',sans-serif;font-size:10.5px;letter-spacing:0;font-weight:900;white-space:nowrap}
+  .codechip.used{background:#ecfdf5;border-color:rgba(16,185,129,.5)}
+  .codechip.used small{color:#047857}
+  .codechip.unused small{color:var(--muted2)}
+
   @media (max-width:760px){ .controls{grid-template-columns:1fr 1fr} }
 
   /* ---------- Print ---------- */
@@ -199,6 +217,21 @@
     </div>
   </div>
 
+  <div class="panel no-print" id="statusPanel">
+    <h2>Ticket status 📊</h2>
+    <p class="sub">Live from the database — see which tickets have been used to vote. Updates every 20 seconds.</p>
+    <div class="toolrow" style="margin-bottom:4px">
+      <button class="btn primary" id="stBtn">🔄 Refresh status</button>
+      <span class="pillinfo" id="stInfo">Loads with your teacher passcode</span>
+    </div>
+    <div class="statbar" id="statBar" style="display:none">
+      <div class="stat"><b id="stTotal">0</b><span>tickets</span></div>
+      <div class="stat used"><b id="stUsed">0</b><span>voted</span></div>
+      <div class="stat left"><b id="stLeft">0</b><span>not used yet</span></div>
+    </div>
+    <div class="codegrid" id="codeGrid"></div>
+  </div>
+
   <div class="tickets" id="tickets">
     <div class="empty-note">Your printable tickets will appear here ✂️</div>
   </div>
@@ -232,12 +265,21 @@
   var ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
   var CODE_LEN = 6;
 
+  var BATCH_KEY = "lfcd.tickets.batch.v1";
   var voteUrlI = $("#voteUrl"), numI = $("#num"), eventI = $("#eventName"),
       ticketsEl = $("#tickets"), tools = $("#tools"), countInfo = $("#countInfo"),
       sqlBox = $("#sqlBox"), sqlText = $("#sqlText"),
-      actStatus = $("#actStatus"), activateBtn = $("#activateBtn");
+      actStatus = $("#actStatus"), activateBtn = $("#activateBtn"),
+      stBtn = $("#stBtn"), stInfo = $("#stInfo"), statBar = $("#statBar"), codeGrid = $("#codeGrid"),
+      stTotal = $("#stTotal"), stUsed = $("#stUsed"), stLeft = $("#stLeft");
   var codes = [];
   var activated = false;
+  var stTimer = null;
+
+  function sbHeaders(){ return { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + SUPABASE_ANON_KEY, "Content-Type": "application/json" }; }
+  function saveBatch(){
+    try{ localStorage.setItem(BATCH_KEY, JSON.stringify({ codes: codes, activated: activated, at: Date.now() })); }catch(e){}
+  }
 
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
@@ -290,11 +332,15 @@
   function generate(){
     var n = Math.max(1, Math.min(500, parseInt(numI.value, 10) || 40));
     numI.value = n;
+    saveSettings();
+    codes = makeCodes(n);
+    renderTickets();
+    setActivated(false);
+  }
+
+  function renderTickets(){
     var base = normalizeUrl(voteUrlI.value);
     var ev = eventI.value.trim() || "Project Vote";
-    saveSettings();
-
-    codes = makeCodes(n);
     ticketsEl.innerHTML = codes.map(function(c){
       var link = ticketLink(base, c);
       var qr = link ? '<img class="qr" src="'+esc(qrSrc(link))+'" alt="QR for voting" loading="lazy" />'
@@ -310,10 +356,9 @@
       '</div>';
     }).join("");
 
-    countInfo.textContent = String(n);
+    countInfo.textContent = String(codes.length);
     tools.style.display = "flex";
     sqlText.value = buildSql();
-    setActivated(false);
   }
 
   /* ---------- activation (makes codes valid for voting) ---------- */
@@ -330,6 +375,7 @@
       activateBtn.disabled = false;
       activateBtn.innerHTML = "⚡ Activate tickets";
     }
+    saveBatch();
   }
 
   var passModal = $("#passModal"), passInput = $("#passInput"), passErr = $("#passErr");
@@ -376,6 +422,7 @@
         }
         if(typeof res === "string" && res.indexOf("OK:") === 0){
           setActivated(true, " (" + res.slice(3) + " new)");
+          loadStatus(true);
         }else{
           setActivated(false);
           alert("Unexpected reply from the database — try again.");
@@ -426,7 +473,67 @@
     setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
   });
 
+  /* ---------- ticket status (live from the database) ---------- */
+  function fmtTime(ts){
+    try{ return new Date(ts).toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" }); }catch(e){ return ""; }
+  }
+  function renderStatus(rows){
+    statBar.style.display = "flex";
+    var used = rows.filter(function(r){ return r.used_at; }).length;
+    stTotal.textContent = String(rows.length);
+    stUsed.textContent = String(used);
+    stLeft.textContent = String(rows.length - used);
+    stInfo.textContent = "Updated " + new Date().toLocaleTimeString();
+    codeGrid.innerHTML = rows.length ? rows.map(function(r){
+      return '<div class="codechip ' + (r.used_at ? 'used' : 'unused') + '">' + esc(r.code) +
+        '<small>' + (r.used_at ? '✓ voted ' + fmtTime(r.used_at) : '○ not used') + '</small></div>';
+    }).join("") : '<div class="empty-note">No tickets in the database yet — generate and activate some above.</div>';
+  }
+  function loadStatus(silent){
+    ensurePass(function(p){
+      if(!silent){ stBtn.disabled = true; stBtn.textContent = "Loading…"; }
+      fetch(SUPABASE_URL + "/rest/v1/rpc/codes_status", {
+        method:"POST", headers: sbHeaders(), body: JSON.stringify({ p_pass: p })
+      })
+      .then(function(r){
+        if(r.ok) return r.json();
+        return r.text().then(function(t){ throw new Error(t || ("HTTP " + r.status)); });
+      })
+      .then(function(rows){
+        stBtn.disabled = false; stBtn.textContent = "🔄 Refresh status";
+        renderStatus(rows || []);
+        if(!stTimer){
+          stTimer = setInterval(function(){ if(!document.hidden && getPass()) loadStatus(true); }, 20000);
+        }
+      })
+      .catch(function(err){
+        stBtn.disabled = false; stBtn.textContent = "🔄 Refresh status";
+        if(String(err.message).indexOf("ERR_PASS") !== -1){
+          clearPass();
+          ensurePass(function(){ loadStatus(); }, "That passcode isn't right — try again.");
+        }else{
+          stInfo.textContent = "Can't reach the database — try again";
+        }
+      });
+    });
+  }
+  stBtn.addEventListener("click", function(){ loadStatus(false); });
+
+  /* ---------- boot ---------- */
   loadSettings();
+  // Restore the last generated batch so a refresh doesn't lose your tickets
+  (function restoreBatch(){
+    try{
+      var b = JSON.parse(localStorage.getItem(BATCH_KEY));
+      if(b && Array.isArray(b.codes) && b.codes.length){
+        codes = b.codes;
+        renderTickets();
+        setActivated(!!b.activated, "");
+      }
+    }catch(e){}
+  })();
+  // If the passcode is already saved on this device, load the status right away
+  if(getPass()) loadStatus(true);
 })();
 </script>
 </body>

@@ -5,7 +5,7 @@
 --  How it works
 --  ------------
 --  • You print tickets with one-time codes (codes.html makes them).
---  • Each code submits exactly ONE ballot containing THREE different
+--  • Each code submits exactly ONE ballot containing 1 to 3 different
 --    project ids — enforced here, in the database, so nobody can vote
 --    twice even if they clear their browser or call the API directly.
 --  • The public can only: (a) call cast_ballot, (b) read the totals.
@@ -21,14 +21,18 @@ create table if not exists public.vote_codes (
 alter table public.vote_codes enable row level security;
 -- No policies on purpose: anonymous users cannot read or write codes directly.
 
--- 2) Ballots (one row per voter; the 3 picks live in site_ids)
+-- 2) Ballots (one row per voter; their 1–3 picks live in site_ids)
 create table if not exists public.ballots (
   id         uuid primary key default gen_random_uuid(),
   code       text not null unique references public.vote_codes(code),
   site_ids   text[] not null,
   created_at timestamptz not null default now(),
-  constraint exactly_three_picks check (array_length(site_ids, 1) = 3)
+  constraint picks_one_to_three check (array_length(site_ids, 1) between 1 and 3)
 );
+-- Migration for older installs (safe to re-run):
+alter table public.ballots drop constraint if exists exactly_three_picks;
+alter table public.ballots drop constraint if exists picks_one_to_three;
+alter table public.ballots add constraint picks_one_to_three check (array_length(site_ids, 1) between 1 and 3);
 alter table public.ballots enable row level security;
 -- No policies on purpose: ballots are only written via cast_ballot below,
 -- and only read in aggregate via the vote_results view.
@@ -45,12 +49,12 @@ declare
   v_code  text;
   v_clean text[];
 begin
-  -- Normalize and validate the 3 picks: distinct, non-empty, sane length.
+  -- Normalize and validate the picks: 1 to 3 distinct, non-empty, sane length.
   select array_agg(distinct t) into v_clean
   from (select trim(x) as t from unnest(coalesce(p_site_ids, '{}')) as x) s
   where t <> '' and length(t) <= 80;
 
-  if v_clean is null or array_length(v_clean, 1) <> 3 then
+  if v_clean is null or array_length(v_clean, 1) < 1 or array_length(v_clean, 1) > 3 then
     return 'ERR_PICKS';
   end if;
 
@@ -210,6 +214,23 @@ begin
 end; $$;
 revoke all on function public.codes_add(text, text[]) from public;
 grant execute on function public.codes_add(text, text[]) to anon, authenticated;
+
+-- 8b) Ticket status for the teacher (codes.html "Ticket status" panel).
+--     Wrong passcode raises an error containing ERR_PASS.
+create or replace function public.codes_status(p_pass text)
+returns table(code text, used_at timestamptz, created_at timestamptz)
+language plpgsql security definer set search_path = public as $$
+begin
+  if not exists (select 1 from public.teacher_secret where pass = p_pass) then
+    raise exception 'ERR_PASS';
+  end if;
+  return query
+    select c.code, c.used_at, c.created_at
+    from public.vote_codes c
+    order by c.used_at desc nulls last, c.created_at desc, c.code;
+end; $$;
+revoke all on function public.codes_status(text) from public;
+grant execute on function public.codes_status(text) to anon, authenticated;
 
 -- 9) Bring in the current 7 projects (skipped if they already exist)
 insert into public.sites (id, name, url, brief, created_at) values

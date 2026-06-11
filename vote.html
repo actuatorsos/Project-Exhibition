@@ -296,11 +296,11 @@
 <div class="wrap">
 
   <div class="lead" id="lead">
-    <h2>Pick your <span>top 3</span> projects! 🏆</h2>
-    <p class="sub">Every voter chooses <b>three different websites</b>. Browse, tap to pick, then send your ballot with the code on your ticket.</p>
+    <h2>Pick your <span>favorites</span>! 🏆</h2>
+    <p class="sub">Vote for <b>1, 2, or 3 different websites</b> — your choice. Browse, tap to pick, then send your ballot with the code on your ticket.</p>
     <div class="steps">
       <div class="step"><b>1</b> Browse the sites &amp; read each brief</div>
-      <div class="step"><b>2</b> Tap <b style="background:none;color:var(--pink);width:auto;height:auto">Pick</b> on your 3 favorites</div>
+      <div class="step"><b>2</b> Tap <b style="background:none;color:var(--pink);width:auto;height:auto">Pick</b> on up to 3 favorites</div>
       <div class="step"><b>3</b> Send your votes with your ticket code</div>
     </div>
     <div class="total">Votes counted so far: <b id="totalVotes">0</b></div>
@@ -308,7 +308,7 @@
 
   <div class="done-banner" id="doneBanner">
     <h3>🎉 Your votes are in!</h3>
-    <p id="doneText">Thanks for voting — your 3 picks are marked below. Watch the bars to see the results live!</p>
+    <p id="doneText">Thanks for voting — your picks are marked below. Watch the bars to see the results live!</p>
   </div>
 
   <div class="podium" id="podium" aria-label="Current top three"></div>
@@ -321,16 +321,16 @@
   <div class="slots" id="slots">
     <div class="slot">1</div><div class="slot">2</div><div class="slot">3</div>
   </div>
-  <div class="pickmsg" id="pickmsg">Tap <b>Pick</b> on your 3 favorite projects</div>
-  <button class="sendbtn" id="sendBtn" disabled>Send my 3 votes ✨</button>
+  <div class="pickmsg" id="pickmsg">Tap <b>Pick</b> on 1 to 3 projects</div>
+  <button class="sendbtn" id="sendBtn" disabled>Send my votes ✨</button>
 </div>
 
 <!-- Submit modal -->
 <div class="modal" id="voteModal" role="dialog" aria-modal="true" aria-labelledby="vmTitle">
   <div class="sheet">
     <button class="x" id="vmClose" aria-label="Close">✕</button>
-    <h3 id="vmTitle">Confirm your 3 picks</h3>
-    <p class="m-sub">These are the projects getting your votes:</p>
+    <h3 id="vmTitle">Confirm your picks</h3>
+    <p class="m-sub">These are the projects getting your votes (you can pick up to 3):</p>
     <div class="mypicks" id="myPicks"></div>
     <div id="codeBlock">
       <label class="codelabel" for="codeInput">Your ticket code</label>
@@ -581,11 +581,13 @@
         if(picks[i]){ slots[i].className = "slot full"; slots[i].textContent = "✓"; }
         else { slots[i].className = "slot"; slots[i].textContent = String(i+1); }
       }
-      var left = 3 - picks.length;
-      pickmsg.innerHTML = left === 3 ? 'Tap <b>Pick</b> on your 3 favorite projects'
-        : left === 0 ? '<b>All 3 picked!</b> Ready to send 🎉'
-        : '<b>' + picks.length + ' of 3</b> picked — ' + left + ' to go!';
-      sendBtn.disabled = left !== 0;
+      var n = picks.length;
+      pickmsg.innerHTML = n === 0 ? 'Tap <b>Pick</b> on 1 to 3 projects'
+        : n === 3 ? '<b>All 3 picked!</b> Ready to send 🎉'
+        : '<b>' + n + ' picked</b> — add up to ' + (3 - n) + ' more, or send now!';
+      sendBtn.disabled = n === 0;
+      sendBtn.textContent = n === 0 ? 'Send my votes ✨'
+        : 'Send my ' + n + ' vote' + (n > 1 ? 's' : '') + ' ✨';
     }
 
     doneBanner.className = "done-banner" + (voted ? " show" : "");
@@ -612,14 +614,14 @@
         return;
       }
       picks.push(id);
-      if(picks.length === 3) showToast("Awesome — now hit “Send my 3 votes”! 🚀");
+      if(picks.length === 3) showToast("3 picked — that's the max. Send when ready! 🚀");
     }
     paintPicks();
   });
 
   // ---------- submit flow ----------
   function openModal(){
-    if(picks.length !== 3 || ballot) return;
+    if(picks.length < 1 || picks.length > 3 || ballot) return;
     myPicksEl.innerHTML = picks.map(function(id){
       return '<div class="mp"><i>⭐</i><span>'+esc(nameOf(id))+'</span></div>';
     }).join("");
@@ -650,7 +652,7 @@
   }
 
   vmSubmit.addEventListener("click", function(){
-    if(ballot || picks.length !== 3) return;
+    if(ballot || picks.length < 1 || picks.length > 3) return;
 
     if(!LIVE){
       // practice mode: tally locally on this device
@@ -670,7 +672,7 @@
         if(res === "OK"){ finishVote(); refreshCounts(); }
         else if(res === "ERR_USED") fail("That code was already used. Each ticket can vote once — ask for a new ticket if this wasn't you.");
         else if(res === "ERR_CODE") fail("Code not recognized — check the letters on your ticket and try again.");
-        else if(res === "ERR_PICKS") fail("Your ballot needs exactly 3 different projects.");
+        else if(res === "ERR_PICKS") fail("Pick between 1 and 3 different projects.");
         else fail("Something unexpected came back — please try again.");
       })
       .catch(function(){ fail("Can't reach the vote server — check your internet and try again."); });
