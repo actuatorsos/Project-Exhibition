@@ -3,7 +3,8 @@
 A live showcase of student websites, with secure "pick your top 3" audience voting.
 
 ## Pages
-- **index.html** — the home page: a gallery of student sites with live previews, plus the teacher tools (add / edit / delete, export, voting QR). The **⭐ Vote now** button links to the voting page.
+- **index.html** — the public home page: a clean gallery of student sites with live previews and a **⭐ Vote now** button. No editing controls — safe to share with everyone.
+- **teacher.html** — the teacher workspace: add / edit / delete projects (saved online for everyone, teacher passcode required), voting QR, backups, and a link to the ticket maker.
 - **vote.html** — the public voting page: voters tap **Pick** on **1 to 3** projects, then submit their ballot with the one-time code from their ticket. Live results (bars, medals, podium) update on the page.
 - **codes.html** — teacher-only ticket maker: generates unique one-time codes, **⚡ activates them** (teacher passcode), prints cut-out tickets (each with a QR that opens vote.html with the code pre-filled), remembers your batch across refreshes, and shows a **live status panel** of which tickets have voted.
 - **sites.json** — the list of student projects shown to everyone.

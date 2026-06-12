@@ -25,9 +25,7 @@
     --purple:#8b5cf6;
     --cyan:#22d3ee;
     --green:#10b981;
-    --danger:#ef4444;
     --grad:linear-gradient(115deg,#8b5cf6 0%,#ec4899 48%,#fb923c 100%);
-    --grad2:linear-gradient(115deg,#22d3ee 0%,#8b5cf6 100%);
     --pop:6px 6px 0 rgba(36,26,61,.10);
     --pop-pink:7px 7px 0 rgba(236,72,153,.22);
   }
@@ -88,13 +86,6 @@
     border:2px solid var(--border);border-radius:999px;padding:6px 13px;white-space:nowrap;background:var(--bg2);
   }
   .count b{color:var(--pink)}
-  .net{
-    display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);font-weight:800;
-    border:2px solid var(--border);background:var(--bg2);border-radius:999px;padding:6px 11px;white-space:nowrap;
-  }
-  .net .ndot{width:8px;height:8px;border-radius:50%;background:var(--muted2)}
-  .net.on .ndot{background:var(--green);box-shadow:0 0 0 3px rgba(16,185,129,.18)}
-  .net.off .ndot{background:var(--yellow);box-shadow:0 0 0 3px rgba(251,191,36,.22)}
   .search{
     display:flex;align-items:center;gap:8px;
     background:var(--bg2);border:2px solid var(--border);border-radius:999px;
@@ -107,25 +98,6 @@
   }
   .search input::placeholder{color:var(--muted2)}
   .search svg{flex:none;opacity:.55}
-
-  /* ---------- Add bar ---------- */
-  .add{ max-width:1280px;margin:20px auto 0;padding:0 24px; }
-  .add form{
-    display:grid;grid-template-columns:1.1fr 1.6fr 1.4fr auto;gap:10px;
-    background:var(--panel);
-    border:2px solid var(--border);border-radius:22px;padding:16px;
-    align-items:center;box-shadow:var(--pop);
-  }
-  .field{display:flex;flex-direction:column;gap:5px;min-width:0}
-  .field label{font-size:11px;color:var(--purple);letter-spacing:.6px;text-transform:uppercase;font-weight:800}
-  .field input{
-    background:var(--bg);border:2px solid var(--border);border-radius:13px;
-    padding:11px 14px;color:var(--text);font-size:14px;outline:none;transition:.15s;width:100%;
-    font-family:'Nunito',sans-serif;font-weight:700;
-  }
-  .field input::placeholder{color:var(--muted2);font-weight:600}
-  .field input:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(236,72,153,.14);background:#fff}
-  .add-actions{display:flex;gap:8px;align-items:flex-end;height:100%;padding-bottom:1px}
   .btn{
     font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;
     border-radius:999px;padding:11px 19px;border:2px solid var(--border);
@@ -137,12 +109,18 @@
   .btn.primary{background:var(--grad);color:#fff;border:none;box-shadow:0 5px 0 rgba(190,60,140,.35)}
   .btn.primary:hover{filter:brightness(1.06);transform:translateY(-2px);box-shadow:0 7px 0 rgba(190,60,140,.35)}
   .btn.primary:active{transform:translateY(1px);box-shadow:0 2px 0 rgba(190,60,140,.35)}
-  .btn.primary[disabled]{background:#e8e1f4;color:var(--muted2);box-shadow:none;cursor:not-allowed;transform:none;filter:none}
-  .btn.ghost{background:transparent;color:var(--muted);border-color:transparent;padding:9px 13px}
-  .btn.ghost:hover{color:var(--text);border-color:var(--border);box-shadow:none}
-  .btn.danger:hover{color:var(--danger);border-color:rgba(239,68,68,.5);box-shadow:0 4px 0 rgba(239,68,68,.2)}
   .btn.sm{padding:8px 14px;font-size:13px}
-  .hint{max-width:1280px;margin:10px auto 0;padding:0 28px;font-size:12.5px;color:var(--muted2);font-weight:700}
+
+  /* ---------- Welcome strip ---------- */
+  .welcome{max-width:1280px;margin:22px auto 0;padding:0 24px}
+  .welcome .inner{
+    background:var(--panel);border:2px solid var(--border);border-radius:22px;padding:16px 20px;
+    box-shadow:var(--pop);display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  }
+  .welcome h2{margin:0;font-family:'Fredoka',sans-serif;font-size:19px;font-weight:600}
+  .welcome h2 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .welcome p{margin:2px 0 0;font-size:13px;color:var(--muted);font-weight:700}
+  .welcome .grow{flex:1;min-width:200px}
 
   /* ---------- Grid ---------- */
   main{
@@ -223,39 +201,10 @@
     display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--muted2);font-weight:700;
   }
   .foot .spacer{flex:1}
-
-  /* ---------- Modals ---------- */
-  .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(36,26,61,.45);backdrop-filter:blur(4px)}
-  .modal.show{display:flex}
-  .sheet{position:relative;width:100%;max-width:450px;background:var(--panel);border:2px solid var(--border);border-radius:24px;padding:24px;box-shadow:10px 10px 0 rgba(36,26,61,.18)}
-  .sheet h3{margin:0 0 6px;font-family:'Fredoka',sans-serif;font-size:19px;font-weight:600}
-  .m-sub{margin:0 0 14px;color:var(--muted);font-size:13px;line-height:1.55;font-weight:600}
-  .m-row{display:flex;gap:8px}
-  .m-row input{flex:1;min-width:0;background:var(--bg);border:2px solid var(--border);border-radius:13px;padding:11px 13px;color:var(--text);font-size:14px;outline:none;font-family:'Nunito',sans-serif;font-weight:700}
-  .m-row input:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(236,72,153,.14);background:#fff}
-  .x{position:absolute;top:14px;right:14px;border:none;background:none;color:var(--muted2);font-size:17px;cursor:pointer;line-height:1}
-  .x:hover{color:var(--text)}
-  .qr-wrap{margin-top:18px;text-align:center}
-  .qr-wrap img{width:230px;height:230px;border-radius:16px;border:2px solid var(--border);background:#fff;padding:10px}
-  .qr-link{margin:11px 0 9px;font-size:12px;color:var(--purple);word-break:break-all;font-weight:700}
-  .qr-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-  .m-note{margin:10px 0 0;font-size:11.5px;color:var(--muted2);line-height:1.55;font-weight:600}
-  .m-err{margin:10px 0 0;font-size:12.5px;color:var(--danger);font-weight:800;display:none}
-  .m-err.show{display:block}
-
-  /* ---------- Toast ---------- */
-  .toast{
-    position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);
-    background:var(--ink);color:#fff;padding:12px 19px;border-radius:999px;font-size:13.5px;font-weight:800;
-    box-shadow:0 16px 40px -12px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.3s;z-index:120;
-    max-width:calc(100% - 32px);text-align:center;
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .foot a.tiny{color:var(--muted2);font-weight:800;font-size:12px}
+  .foot a.tiny:hover{color:var(--purple)}
 
   @media (max-width:720px){
-    .add form{grid-template-columns:1fr 1fr}
-    .add-actions{grid-column:1 / -1}
-    .add-actions .btn{flex:1;justify-content:center}
     .search{order:5;flex:1 1 100%}
   }
 </style>
@@ -277,7 +226,6 @@
     </div>
     <div class="spacer"></div>
     <a class="btn sm primary" href="./vote.html" style="text-decoration:none" aria-label="Open the voting page">⭐ Vote now</a>
-    <div class="net" id="net"><span class="ndot"></span><span id="netText">Connecting…</span></div>
     <div class="count" id="count">0 sites</div>
     <label class="search">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -286,145 +234,64 @@
   </div>
 </header>
 
-<section class="add">
-  <form id="addForm" autocomplete="off">
-    <div class="field">
-      <label for="name">Student / Project</label>
-      <input id="name" type="text" placeholder="e.g. Lina's Portfolio" required />
+<div class="welcome">
+  <div class="inner">
+    <div class="grow">
+      <h2>Welcome to our <span>project exhibition</span>! 🎉</h2>
+      <p>Explore the websites our students built, open the ones you love, then vote for your favorites.</p>
     </div>
-    <div class="field">
-      <label for="url">Website link</label>
-      <input id="url" type="text" placeholder="lina.github.io  or  https://…" required />
-    </div>
-    <div class="field">
-      <label for="desc">Brief (shown when voting)</label>
-      <input id="desc" type="text" placeholder="e.g. AI chatbot for homework help" />
-    </div>
-    <div class="add-actions">
-      <button class="btn primary" type="submit" id="submitBtn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
-        Add
-      </button>
-      <button class="btn ghost" type="button" id="cancelEdit" style="display:none">Cancel</button>
-    </div>
-  </form>
-</section>
-<div class="hint">Tip: paste a link — previews are live, and every change here <b>saves online instantly for everyone</b> (it just asks for the teacher passcode once). If a card looks blank, that site blocks embedding; click it to open the real site.</div>
+    <a class="btn primary" href="./vote.html">⭐ Vote for your favorites</a>
+  </div>
+</div>
 
 <main id="grid"></main>
 
 <div class="empty" id="empty" style="display:none">
-  <div class="ic">🚀</div>
-  <h2>No student sites yet</h2>
-  <p>Add your first one above — paste a student's website link and it appears instantly as a live preview, online for everyone.</p>
+  <div class="ic">🎨</div>
+  <h2>The showcase is being prepared</h2>
+  <p>No projects published yet — check back soon!</p>
 </div>
 
 <footer>
   <div class="foot">
-    <span>LFCD AI Academy · changes go live for everyone instantly 🌍</span>
+    <span>LFCD AI Academy · Student Project Exhibition</span>
     <span class="spacer"></span>
-    <a class="btn sm" href="./codes.html" style="border-color:rgba(236,72,153,.5);color:var(--pink)">🎟 Voting tickets</a>
-    <button class="btn sm" id="qrBtn" style="border-color:rgba(139,92,246,.5);color:var(--purple)">▦ Voting QR &amp; page</button>
-    <button class="btn ghost sm" id="exportBtn">⬇ Export backup</button>
-    <button class="btn ghost sm" id="importBtn">⬆ Import</button>
-    <input type="file" id="importFile" accept="application/json" style="display:none" />
+    <a class="tiny" href="./vote.html">Vote</a>
+    <a class="tiny" href="./teacher.html" aria-label="Teacher tools">🔑 Teacher</a>
   </div>
 </footer>
-
-<div class="modal" id="qrModal">
-  <div class="sheet">
-    <button class="x" id="qrClose" aria-label="Close">✕</button>
-    <h3>Voting QR code</h3>
-    <p class="m-sub">Paste the public link to your published <b>vote.html</b>, then create a QR code to print or share. For one-per-person secure voting, print <b>🎟 Voting tickets</b> instead — each ticket has its own code.</p>
-    <div class="m-row">
-      <input id="voteUrl" type="text" placeholder="https://your-project.vercel.app/vote.html" />
-      <button class="btn primary sm" id="qrGen">Create</button>
-    </div>
-    <div class="qr-wrap" id="qrWrap" style="display:none">
-      <img id="qrImg" alt="Voting QR code" />
-      <div class="qr-link" id="qrHint"></div>
-      <div class="qr-actions">
-        <button class="btn ghost sm" id="qrPng">Open image</button>
-        <button class="btn ghost sm" id="qrSvg">Print version (SVG)</button>
-        <button class="btn ghost sm" id="qrCopy">Copy link</button>
-      </div>
-      <p class="m-note">To save: open the image, then right-click → Save Image (or long-press on a phone).</p>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="passModal">
-  <div class="sheet">
-    <button class="x" id="passClose" aria-label="Close">✕</button>
-    <h3>Teacher passcode 🔑</h3>
-    <p class="m-sub">Changes go live for everyone, so they need the teacher passcode. You'll only be asked once on this device. (It's set in Supabase — see <b>supabase-setup.sql</b>, or change it anytime with <i>update teacher_secret set pass = '…'</i>.)</p>
-    <div class="m-row">
-      <input id="passInput" type="password" placeholder="LFCD-····-····" autocomplete="off" spellcheck="false" />
-      <button class="btn primary sm" id="passSave">Unlock</button>
-    </div>
-    <p class="m-err" id="passErr"></p>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
 
 <script>
 (function(){
   "use strict";
 
-  /* ============ CONFIG — same database as vote.html ============ */
+  /* Same database as the rest of the site (read-only here) */
   var SUPABASE_URL = "https://xrvmqhvkffgeyvtctaok.supabase.co";
   var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhydm1xaHZrZmZnZXl2dGN0YW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExODEwNDcsImV4cCI6MjA5Njc1NzA0N30.LPF3ldLEjOxpMLuKm7uRLV_n0Dqdt3Y_POxaPTQpLT4";
   var LIVE = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
-  var PASS_KEY = "lfcd.teacher.pass";
 
   var sites = [];
-  var editingId = null;
   var query = "";
-  var online = false;
 
   var $ = function(s){ return document.querySelector(s); };
-  var grid = $("#grid"), empty = $("#empty"), countEl = $("#count");
-  var netEl = $("#net"), netText = $("#netText");
-  var form = $("#addForm"), nameI = $("#name"), urlI = $("#url"), descI = $("#desc");
-  var submitBtn = $("#submitBtn"), cancelBtn = $("#cancelEdit"), searchI = $("#search");
-  var toastEl = $("#toast");
+  var grid = $("#grid"), empty = $("#empty"), countEl = $("#count"), searchI = $("#search");
 
-  /* ---------- helpers ---------- */
-  function normalizeUrl(raw){
-    var u = (raw||"").trim();
-    if(!u) return null;
-    if(!/^https?:\/\//i.test(u)) u = "https://" + u;
-    try{ var p = new URL(u); return p.href; }catch(e){ return null; }
-  }
   function hostOf(url){ try{ return new URL(url).host; }catch(e){ return url; } }
   function safeUrl(u){ try{ var p = new URL(u); return (p.protocol==="http:"||p.protocol==="https:") ? p.href : "about:blank"; }catch(e){ return "about:blank"; } }
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
 
-  var toastT;
-  function toast(msg){
-    toastEl.textContent = msg; toastEl.classList.add("show");
-    clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
-  }
-
-  /* ---------- database ---------- */
-  function headers(){ return { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + SUPABASE_ANON_KEY, "Content-Type": "application/json" }; }
-  function rpc(fn, body){
-    return fetch(SUPABASE_URL + "/rest/v1/rpc/" + fn, { method:"POST", headers:headers(), body:JSON.stringify(body) })
-      .then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); });
-  }
   function fetchSites(){
-    return fetch(SUPABASE_URL + "/rest/v1/sites?select=id,name,url,brief&order=created_at.desc", { headers:headers() })
-      .then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
-      .then(function(rows){
-        sites = (rows||[]).map(function(r){ return { id:String(r.id), name:r.name||hostOf(r.url), url:r.url, desc:r.brief||"" }; });
-        setOnline(true);
-        render();
-      });
+    return fetch(SUPABASE_URL + "/rest/v1/sites?select=id,name,url,brief&order=created_at.desc", {
+      headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + SUPABASE_ANON_KEY }
+    })
+    .then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function(rows){
+      sites = (rows||[]).map(function(r){ return { id:String(r.id), name:r.name||hostOf(r.url), url:r.url, desc:r.brief||"" }; });
+      render();
+    });
   }
   function loadFallback(){
-    setOnline(false);
     return fetch("./sites.json", {cache:"no-store"})
       .then(function(r){ if(!r.ok) throw 0; return r.json(); })
       .then(function(a){
@@ -436,97 +303,7 @@
       })
       .catch(function(){ sites = []; render(); });
   }
-  function setOnline(on){
-    online = on;
-    netEl.className = "net " + (on ? "on" : "off");
-    netText.textContent = on ? "Online · shared with everyone" : "Offline — read only";
-    submitBtn.disabled = !on && LIVE;
-  }
 
-  /* ---------- teacher passcode ---------- */
-  var passModal = $("#passModal"), passInput = $("#passInput"), passErr = $("#passErr");
-  var passPending = null;
-
-  function getPass(){ try{ return localStorage.getItem(PASS_KEY) || ""; }catch(e){ return ""; } }
-  function setPass(p){ try{ localStorage.setItem(PASS_KEY, p); }catch(e){} }
-  function clearPass(){ try{ localStorage.removeItem(PASS_KEY); }catch(e){} }
-
-  function ensurePass(then, errMsg){
-    var p = getPass();
-    if(p && !errMsg){ then(p); return; }
-    passPending = then;
-    passErr.textContent = errMsg || "";
-    passErr.className = "m-err" + (errMsg ? " show" : "");
-    passModal.classList.add("show");
-    setTimeout(function(){ passInput.focus(); }, 60);
-  }
-  function submitPass(){
-    var p = passInput.value.trim();
-    if(!p){ passInput.focus(); return; }
-    setPass(p);
-    passModal.classList.remove("show");
-    passInput.value = "";
-    var fn = passPending; passPending = null;
-    if(fn) fn(p);
-  }
-  $("#passSave").addEventListener("click", submitPass);
-  passInput.addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); submitPass(); } });
-  $("#passClose").addEventListener("click", function(){ passModal.classList.remove("show"); passPending = null; });
-
-  function handleResult(res, retry, onOk){
-    if(res === "ERR_PASS"){ clearPass(); ensurePass(retry, "That passcode isn't right — try again."); return; }
-    if(res === "ERR_INPUT"){ toast("Check the link — it must start with http(s) ⚠️"); return; }
-    if(res === "ERR_NOTFOUND"){ toast("That project no longer exists — refreshing"); fetchSites(); return; }
-    onOk(res);
-  }
-  function netFail(){ busy(false); toast("Can't reach the database — check your internet ⚠️"); }
-  function busy(b){
-    submitBtn.disabled = b;
-    if(b){ submitBtn.textContent = "Saving…"; }
-    else if(editingId){ submitBtn.textContent = "Save changes"; }
-    else { submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add'; }
-  }
-
-  /* ---------- add / edit / delete (online for everyone) ---------- */
-  function doAdd(name, url, desc){
-    ensurePass(function(p){
-      busy(true);
-      rpc("site_add", { p_pass:p, p_name:name, p_url:url, p_brief:desc }).then(function(res){
-        busy(false);
-        handleResult(res, function(){ doAdd(name, url, desc); }, function(){
-          form.reset(); nameI.focus();
-          toast("Added — it's live for everyone 🎉");
-          fetchSites();
-        });
-      }).catch(netFail);
-    });
-  }
-  function doUpdate(id, name, url, desc){
-    ensurePass(function(p){
-      busy(true);
-      rpc("site_update", { p_pass:p, p_id:id, p_name:name, p_url:url, p_brief:desc }).then(function(res){
-        busy(false);
-        handleResult(res, function(){ doUpdate(id, name, url, desc); }, function(){
-          stopEdit();
-          toast("Saved — updated for everyone ✔");
-          fetchSites();
-        });
-      }).catch(netFail);
-    });
-  }
-  function doDelete(id, name){
-    ensurePass(function(p){
-      rpc("site_delete", { p_pass:p, p_id:id }).then(function(res){
-        handleResult(res, function(){ doDelete(id, name); }, function(){
-          if(editingId === id) stopEdit();
-          toast("Removed “" + name + "”");
-          fetchSites();
-        });
-      }).catch(netFail);
-    });
-  }
-
-  /* ---------- render ---------- */
   function render(){
     var q = query.toLowerCase();
     var list = sites.filter(function(s){
@@ -566,11 +343,9 @@
         '</div>' +
         '<div class="meta">' +
           '<h3>'+esc(s.name)+'</h3>' +
-          (s.desc ? '<p class="desc">'+esc(s.desc)+'</p>' : '<p class="desc" style="opacity:.5">No brief yet</p>') +
+          (s.desc ? '<p class="desc">'+esc(s.desc)+'</p>' : '<p class="desc" style="opacity:.5"></p>') +
           '<div class="actions">' +
-            '<a class="btn sm open" href="'+esc(safe)+'" target="_blank" rel="noopener noreferrer">Open ↗</a>' +
-            '<button class="btn sm ghost" data-edit="'+s.id+'">Edit</button>' +
-            '<button class="btn sm ghost danger" data-del="'+s.id+'">Delete</button>' +
+            '<a class="btn sm open" href="'+esc(safe)+'" target="_blank" rel="noopener noreferrer">Open the site ↗</a>' +
           '</div>' +
         '</div>';
       grid.appendChild(card);
@@ -593,142 +368,7 @@
     iframe.style.transform = "scale(" + scale + ")";
   }
 
-  /* ---------- form ---------- */
-  form.addEventListener("submit", function(e){
-    e.preventDefault();
-    if(!online){ toast("Offline — can't save right now ⚠️"); return; }
-    var url = normalizeUrl(urlI.value);
-    if(!url){ urlI.focus(); urlI.style.borderColor = "var(--danger)"; return; }
-    urlI.style.borderColor = "";
-    var name = nameI.value.trim() || hostOf(url);
-    var desc = descI.value.trim();
-    if(editingId) doUpdate(editingId, name, url, desc);
-    else doAdd(name, url, desc);
-  });
-
-  function startEdit(id){
-    var s = sites.find(function(x){ return x.id === id; });
-    if(!s) return;
-    editingId = id;
-    nameI.value = s.name; urlI.value = s.url; descI.value = s.desc || "";
-    submitBtn.textContent = "Save changes";
-    cancelBtn.style.display = "";
-    window.scrollTo({ top:0, behavior:"smooth" });
-    nameI.focus();
-  }
-  function stopEdit(){
-    editingId = null;
-    submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add';
-    cancelBtn.style.display = "none";
-    form.reset();
-  }
-  cancelBtn.addEventListener("click", stopEdit);
-
-  grid.addEventListener("click", function(e){
-    var ed = e.target.closest("[data-edit]");
-    var dl = e.target.closest("[data-del]");
-    if(!ed && !dl) return;
-    if(!online){ toast("Offline — can't change the list right now ⚠️"); return; }
-    if(ed){ startEdit(ed.getAttribute("data-edit")); }
-    else{
-      var id = dl.getAttribute("data-del");
-      var s = sites.find(function(x){ return x.id === id; });
-      if(s && confirm('Remove "' + s.name + '" from the showcase for everyone?')){
-        doDelete(id, s.name);
-      }
-    }
-  });
-
   searchI.addEventListener("input", function(){ query = searchI.value; render(); });
-
-  /* ---------- backup / import ---------- */
-  $("#exportBtn").addEventListener("click", function(){
-    var clean = sites.map(function(s){ return { id:s.id, name:s.name, url:s.url, desc:s.desc||"" }; });
-    var blob = new Blob([JSON.stringify(clean, null, 2)], { type:"application/json" });
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "sites.json";
-    a.click();
-    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
-  });
-  $("#importBtn").addEventListener("click", function(){ $("#importFile").click(); });
-  $("#importFile").addEventListener("change", function(e){
-    var file = e.target.files[0]; if(!file) return;
-    var reader = new FileReader();
-    reader.onload = function(){
-      var clean;
-      try{
-        var data = JSON.parse(reader.result);
-        if(!Array.isArray(data)) throw 0;
-        clean = data.filter(function(d){ return d && d.url; }).map(function(d){
-          return { name: d.name || hostOf(d.url), url: d.url, desc: d.desc || d.brief || "" };
-        });
-      }catch(err){ toast("That file doesn't look like a valid backup ⚠️"); e.target.value = ""; return; }
-      e.target.value = "";
-      if(!clean.length){ toast("No sites found in that file"); return; }
-      if(!online){ toast("Offline — can't import right now ⚠️"); return; }
-      if(!confirm("Add " + clean.length + " site(s) to the online list?")) return;
-      ensurePass(function(p){
-        var done = 0, fail = 0;
-        function next(i){
-          if(i >= clean.length){
-            toast("Imported " + done + " site(s)" + (fail ? (", " + fail + " failed") : "") + " ✔");
-            fetchSites();
-            return;
-          }
-          var d = clean[i];
-          var u = normalizeUrl(d.url);
-          if(!u){ fail++; next(i+1); return; }
-          rpc("site_add", { p_pass:p, p_name:d.name, p_url:u, p_brief:d.desc }).then(function(res){
-            if(res === "ERR_PASS"){ clearPass(); ensurePass(function(){ next(i); }, "That passcode isn't right — try again."); return; }
-            if(res === "ERR_INPUT") fail++; else done++;
-            next(i+1);
-          }).catch(function(){ fail++; next(i+1); });
-        }
-        next(0);
-      });
-    };
-    reader.readAsText(file);
-  });
-
-  /* ---------- voting QR modal ---------- */
-  var modal = $("#qrModal"), urlInput = $("#voteUrl"), qrImg = $("#qrImg"),
-      qrWrap = $("#qrWrap"), qrHint = $("#qrHint");
-
-  function openModal(){
-    if(!urlInput.value){
-      try{ urlInput.value = new URL("vote.html", location.href).href; }catch(e){}
-    }
-    modal.classList.add("show"); setTimeout(function(){ urlInput.focus(); }, 50);
-  }
-  function closeModal(){ modal.classList.remove("show"); }
-  $("#qrBtn").addEventListener("click", openModal);
-  $("#qrClose").addEventListener("click", closeModal);
-  modal.addEventListener("click", function(e){ if(e.target === modal) closeModal(); });
-  document.addEventListener("keydown", function(e){
-    if(e.key === "Escape"){ closeModal(); passModal.classList.remove("show"); passPending = null; }
-  });
-
-  function makeQR(){
-    var u = (urlInput.value || "").trim();
-    if(!u){ urlInput.focus(); return; }
-    if(!/^https?:\/\//i.test(u)) u = "https://" + u;
-    var enc = encodeURIComponent(u);
-    qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=460x460&margin=16&data=" + enc;
-    qrImg.setAttribute("data-svg", "https://api.qrserver.com/v1/create-qr-code/?format=svg&size=700x700&margin=16&data=" + enc);
-    qrHint.textContent = u;
-    qrWrap.style.display = "block";
-  }
-  $("#qrGen").addEventListener("click", makeQR);
-  urlInput.addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); makeQR(); } });
-  $("#qrPng").addEventListener("click", function(){ if(qrImg.src) window.open(qrImg.src, "_blank", "noopener"); });
-  $("#qrSvg").addEventListener("click", function(){ var s = qrImg.getAttribute("data-svg"); if(s) window.open(s, "_blank", "noopener"); });
-  $("#qrCopy").addEventListener("click", function(){
-    var u = qrHint.textContent || urlInput.value;
-    if(navigator.clipboard){ navigator.clipboard.writeText(u); }
-    var btn = $("#qrCopy"); btn.textContent = "Copied!";
-    setTimeout(function(){ btn.textContent = "Copy link"; }, 1300);
-  });
 
   var rT;
   window.addEventListener("resize", function(){
@@ -736,11 +376,9 @@
     rT = setTimeout(function(){ document.querySelectorAll(".viewport").forEach(fit); }, 150);
   });
 
-  /* ---------- boot ---------- */
   if(LIVE){
-    fetchSites().catch(function(){ loadFallback(); });
-    // keep the gallery fresh if it stays open
-    setInterval(function(){ if(!document.hidden && online) fetchSites().catch(function(){ setOnline(false); }); }, 20000);
+    fetchSites().catch(loadFallback);
+    setInterval(function(){ if(!document.hidden) fetchSites().catch(function(){}); }, 25000);
   }else{
     loadFallback();
   }
