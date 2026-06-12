@@ -6,6 +6,7 @@ A live showcase of student websites, with secure "pick your top 3" audience voti
 - **index.html** — the public home page: a clean gallery of student sites with live previews and a **⭐ Vote now** button. No editing controls — safe to share with everyone.
 - **teacher.html** — the teacher workspace: add / edit / delete projects (saved online for everyone, teacher passcode required), voting QR, backups, and a link to the ticket maker.
 - **vote.html** — the public voting page: voters tap **Pick** on **1 to 3** projects, then submit their ballot with the one-time code from their ticket. Live results (bars, medals, podium) update on the page.
+- **results.html** — the **Winners board**: a suspenseful award-ceremony reveal (drumroll → flip 3rd, 2nd, 1st → confetti) plus the full ranking. Open it on the projector for the big reveal; reach it from the teacher page.
 - **codes.html** — teacher-only ticket maker: generates unique one-time codes, **⚡ activates them** (teacher passcode), prints cut-out tickets (each with a QR that opens vote.html with the code pre-filled), remembers your batch across refreshes, and shows a **live status panel** of which tickets have voted.
 - **sites.json** — the list of student projects shown to everyone.
 - **supabase-setup.sql** — the database that makes voting secure.

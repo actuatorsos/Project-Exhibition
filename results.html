@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Winners — LFCD AI Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#16102a; --panel:#241a3d; --panel2:#2d2150;
+    --border:rgba(255,255,255,.14); --border2:rgba(255,255,255,.08);
+    --text:#fdf9ff; --muted:#b3a8d6; --muted2:#7d6fa8;
+    --pink:#f472b6; --orange:#fb923c; --yellow:#fbbf24; --purple:#a78bfa; --cyan:#22d3ee; --green:#34d399;
+    --gold:#fbbf24;
+    --grad:linear-gradient(115deg,#a78bfa 0%,#f472b6 48%,#fb923c 100%);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:'Nunito',system-ui,-apple-system,sans-serif;
+    background:
+      radial-gradient(900px 520px at 50% -10%, rgba(167,139,250,.22), transparent 60%),
+      radial-gradient(700px 480px at 12% 100%, rgba(244,114,182,.14), transparent 60%),
+      radial-gradient(700px 480px at 88% 100%, rgba(251,191,36,.10), transparent 60%),
+      var(--bg);
+    color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+    padding-bottom:120px;
+  }
+  body.shake{animation:bodyshake .12s linear infinite}
+  @keyframes bodyshake{0%,100%{transform:translate(0,0)}25%{transform:translate(2px,-1px)}50%{transform:translate(-2px,1px)}75%{transform:translate(1px,2px)}}
+
+  header{padding:22px 20px 6px;text-align:center}
+  .logo{
+    width:54px;height:54px;border-radius:18px;margin:0 auto 10px;background:var(--grad);
+    display:grid;place-items:center;color:#fff;font-weight:700;font-family:'Fredoka',sans-serif;font-size:19px;
+    transform:rotate(-6deg);box-shadow:0 0 40px rgba(244,114,182,.45);
+  }
+  h1{margin:0;font-family:'Fredoka',sans-serif;font-size:clamp(26px,4.5vw,44px);font-weight:700;letter-spacing:.5px}
+  h1 b{background:linear-gradient(115deg,#fde68a,#fbbf24 40%,#f59e0b);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{margin:6px 0 0;color:var(--muted);font-weight:800;font-size:clamp(13px,1.6vw,16px)}
+  .livepill{
+    display:inline-flex;align-items:center;gap:7px;margin-top:14px;
+    border:2px solid var(--border);background:rgba(255,255,255,.05);border-radius:999px;padding:7px 15px;
+    font-size:13px;font-weight:900;color:var(--muted);
+  }
+  .livepill .dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(52,211,153,.18);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+  .livepill b{color:var(--gold);font-size:15px}
+
+  /* ---------- Stage ---------- */
+  .stage{
+    max-width:1080px;margin:34px auto 0;padding:0 18px;
+    display:flex;align-items:flex-end;justify-content:center;gap:18px;
+  }
+  .ped{flex:1;max-width:330px;display:flex;flex-direction:column;align-items:center;min-width:0}
+  .flip{
+    width:100%;aspect-ratio:1/1.06;perspective:1200px;position:relative;
+  }
+  .flip .inner{
+    position:absolute;inset:0;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.3,1.4,.4,1);
+  }
+  .flip.revealed .inner{transform:rotateY(180deg)}
+  .face{
+    position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    border-radius:26px;border:2px solid var(--border);overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:18px;
+  }
+  .face.front{
+    background:linear-gradient(180deg, var(--panel2), var(--panel));
+    box-shadow:0 24px 60px -24px rgba(0,0,0,.7);
+  }
+  .face.front .q{
+    font-family:'Fredoka',sans-serif;font-size:clamp(54px,8vw,92px);font-weight:700;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-9px) rotate(4deg)}}
+  .face.front .lbl{font-size:13px;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+  .face.back{
+    transform:rotateY(180deg);
+    background:linear-gradient(180deg, #312257, #241a3d);
+    box-shadow:0 24px 60px -22px rgba(0,0,0,.75);
+  }
+  .ped.gold .face.back{border-color:rgba(251,191,36,.65);background:linear-gradient(180deg,#3d2d12,#2b1f0a);box-shadow:0 0 70px -8px rgba(251,191,36,.4)}
+  .face.back .medal{font-size:clamp(40px,5.5vw,62px);line-height:1}
+  .face.back h3{margin:0;font-family:'Fredoka',sans-serif;font-size:clamp(17px,2.4vw,25px);font-weight:600;max-width:100%;overflow-wrap:break-word}
+  .face.back .brief{margin:0;font-size:clamp(11px,1.4vw,13.5px);color:var(--muted);font-weight:700;max-height:3em;overflow:hidden}
+  .face.back .votes{font-family:'Fredoka',sans-serif;font-size:clamp(24px,3.4vw,36px);font-weight:700;color:var(--gold)}
+  .face.back .votes small{font-size:.45em;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:900;letter-spacing:1px}
+  .base{
+    width:86%;border-radius:14px 14px 0 0;margin-top:14px;
+    background:linear-gradient(180deg, var(--panel2), transparent 140%);
+    border:2px solid var(--border2);border-bottom:none;
+    display:grid;place-items:center;font-family:'Fredoka',sans-serif;font-weight:700;color:var(--muted);
+  }
+  .ped.p1 .base{height:96px;font-size:26px;color:var(--gold)}
+  .ped.p2 .base{height:64px;font-size:20px}
+  .ped.p3 .base{height:44px;font-size:18px}
+
+  @media (max-width:680px){
+    .stage{flex-direction:column;align-items:center;gap:22px}
+    .ped{width:100%;max-width:360px}
+    .ped.p1{order:0}.ped.p2{order:1}.ped.p3{order:2}
+    .base{display:none}
+    body{padding-bottom:150px}
+  }
+
+  /* ---------- Full ranking ---------- */
+  .ranking{max-width:760px;margin:36px auto 0;padding:0 18px;display:none}
+  .ranking.show{display:block;animation:rise .6s cubic-bezier(.2,.9,.3,1)}
+  @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+  .ranking h2{font-family:'Fredoka',sans-serif;font-weight:600;font-size:22px;text-align:center;margin:0 0 16px}
+  .rrow{
+    display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.045);
+    border:2px solid var(--border2);border-radius:16px;padding:12px 16px;margin-bottom:9px;
+  }
+  .rrow .pos{width:34px;flex:none;font-family:'Fredoka',sans-serif;font-weight:700;font-size:17px;color:var(--muted)}
+  .rrow .nm{flex:1;min-width:0;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .rrow .bar{flex:2;height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+  .rrow .bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:999px;transition:width 1s cubic-bezier(.2,.7,.2,1)}
+  .rrow .v{width:64px;text-align:right;font-weight:900;color:var(--gold)}
+
+  /* ---------- Control bar ---------- */
+  .controls{
+    position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:50;
+    display:flex;align-items:center;gap:12px;
+    background:rgba(36,26,61,.92);border:2px solid var(--border);border-radius:999px;
+    padding:10px 12px 10px 20px;backdrop-filter:blur(10px);
+    box-shadow:0 18px 50px -12px rgba(0,0,0,.7);
+    max-width:calc(100% - 24px);
+  }
+  .controls .hint{font-size:12px;font-weight:800;color:var(--muted2);white-space:nowrap}
+  .nextbtn{
+    border:none;border-radius:999px;padding:13px 26px;cursor:pointer;
+    font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;color:#fff;background:var(--grad);
+    box-shadow:0 5px 0 rgba(120,40,140,.55);transition:.16s;white-space:nowrap;
+  }
+  .nextbtn:hover{filter:brightness(1.08);transform:translateY(-2px)}
+  .nextbtn:active{transform:translateY(1px)}
+  .nextbtn[disabled]{background:#473a6b;color:var(--muted);box-shadow:none;cursor:default;transform:none;filter:none}
+
+  /* ---------- Drumroll overlay ---------- */
+  .drum{
+    position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;
+    background:rgba(16,10,34,.86);backdrop-filter:blur(6px);
+  }
+  .drum.show{display:flex}
+  .drum .big{font-size:clamp(60px,10vw,110px);animation:drumbob .25s ease-in-out infinite}
+  @keyframes drumbob{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.12)}}
+  .drum .txt{font-family:'Fredoka',sans-serif;font-size:clamp(22px,4vw,38px);font-weight:600;letter-spacing:2px}
+  .drum .dots{display:flex;gap:10px}
+  .drum .dots i{width:14px;height:14px;border-radius:50%;background:var(--gold);animation:dotjump .55s infinite alternate}
+  .drum .dots i:nth-child(2){animation-delay:.18s}
+  .drum .dots i:nth-child(3){animation-delay:.36s}
+  @keyframes dotjump{from{transform:translateY(0);opacity:.45}to{transform:translateY(-14px);opacity:1}}
+
+  /* ---------- Confetti & champion banner ---------- */
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden}
+  .confetti i{position:absolute;top:-22px;display:block;border-radius:2px;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(108vh) rotate(740deg)}}
+  .champ{
+    position:fixed;top:14vh;left:50%;transform:translateX(-50%) scale(.6);opacity:0;z-index:150;pointer-events:none;
+    font-family:'Fredoka',sans-serif;font-weight:700;font-size:clamp(30px,6vw,60px);letter-spacing:1px;
+    background:linear-gradient(115deg,#fde68a,#fbbf24 40%,#f59e0b);-webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 60px rgba(251,191,36,.4);transition:.5s cubic-bezier(.2,1.6,.4,1);white-space:nowrap;
+  }
+  .champ.show{transform:translateX(-50%) scale(1);opacity:1}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">AI</div>
+  <h1>LFCD AI Academy — <b>The Winners</b> 🏆</h1>
+  <p class="sub">Student Website Showcase · Award Ceremony</p>
+  <div class="livepill"><span class="dot"></span><span><b id="totalVotes">0</b>&nbsp;votes counted so far…</span></div>
+</header>
+
+<div class="stage" id="stage">
+  <div class="ped p2" data-place="2">
+    <div class="flip"><div class="inner">
+      <div class="face front"><div class="q">?</div><div class="lbl">2nd place</div></div>
+      <div class="face back"><div class="medal">🥈</div><h3 data-name></h3><p class="brief" data-brief></p><div class="votes"><span data-votes>0</span> <small>VOTES</small></div></div>
+    </div></div>
+    <div class="base">2</div>
+  </div>
+  <div class="ped p1 gold" data-place="1">
+    <div class="flip"><div class="inner">
+      <div class="face front"><div class="q">?</div><div class="lbl">1st place 👑</div></div>
+      <div class="face back"><div class="medal">🥇</div><h3 data-name></h3><p class="brief" data-brief></p><div class="votes"><span data-votes>0</span> <small>VOTES</small></div></div>
+    </div></div>
+    <div class="base">1</div>
+  </div>
+  <div class="ped p3" data-place="3">
+    <div class="flip"><div class="inner">
+      <div class="face front"><div class="q">?</div><div class="lbl">3rd place</div></div>
+      <div class="face back"><div class="medal">🥉</div><h3 data-name></h3><p class="brief" data-brief></p><div class="votes"><span data-votes>0</span> <small>VOTES</small></div></div>
+    </div></div>
+    <div class="base">3</div>
+  </div>
+</div>
+
+<div class="ranking" id="ranking">
+  <h2>Full ranking ⭐</h2>
+  <div id="rankList"></div>
+</div>
+
+<div class="controls">
+  <span class="hint" id="hint">Press Space or tap →</span>
+  <button class="nextbtn" id="nextBtn">🥁 Reveal 3rd place</button>
+</div>
+
+<div class="drum" id="drum">
+  <div class="big">🥁</div>
+  <div class="txt" id="drumTxt">And the 3rd place goes to…</div>
+  <div class="dots"><i></i><i></i><i></i></div>
+</div>
+<div class="champ" id="champ">👑 CHAMPION! 👑</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var SUPABASE_URL = "https://xrvmqhvkffgeyvtctaok.supabase.co";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhydm1xaHZrZmZnZXl2dGN0YW9rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExODEwNDcsImV4cCI6MjA5Njc1NzA0N30.LPF3ldLEjOxpMLuKm7uRLV_n0Dqdt3Y_POxaPTQpLT4";
+
+  var $ = function(s){ return document.querySelector(s); };
+  var nextBtn = $("#nextBtn"), drum = $("#drum"), drumTxt = $("#drumTxt"),
+      totalEl = $("#totalVotes"), ranking = $("#ranking"), rankList = $("#rankList"),
+      champ = $("#champ"), hint = $("#hint");
+
+  var ranked = [];          // [{id,name,brief,votes}] sorted best first
+  var frozen = false;       // stop refreshing once the ceremony starts
+  var busy = false;
+  var queue = [];           // places still to reveal, e.g. [3,2,1]
+  var pollTimer = null;
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+
+  function sbHeaders(){ return { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + SUPABASE_ANON_KEY }; }
+  function fetchData(){
+    var sitesQ = fetch(SUPABASE_URL + "/rest/v1/sites?select=id,name,brief", { headers: sbHeaders() })
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); });
+    var votesQ = fetch(SUPABASE_URL + "/rest/v1/vote_results?select=site_id,votes", { headers: sbHeaders() })
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); });
+    return Promise.all([sitesQ, votesQ]).then(function(res){
+      var counts = {};
+      (res[1]||[]).forEach(function(x){ counts[x.site_id] = x.votes||0; });
+      ranked = (res[0]||[]).map(function(s){
+        return { id:s.id, name:s.name||"?", brief:s.brief||"", votes:counts[s.id]||0 };
+      }).sort(function(a,b){ return (b.votes - a.votes) || a.name.localeCompare(b.name); });
+      var total = 0; ranked.forEach(function(s){ total += s.votes; });
+      totalEl.textContent = total;
+    });
+  }
+
+  function setupQueue(){
+    var places = Math.min(3, ranked.length);
+    queue = [];
+    for(var p = places; p >= 1; p--) queue.push(p);
+    updateBtn();
+  }
+  function labelFor(p){ return p === 1 ? "1st place 👑" : p === 2 ? "2nd place" : "3rd place"; }
+  function updateBtn(){
+    if(queue.length){
+      var p = queue[0];
+      nextBtn.textContent = "🥁 Reveal " + (p===1?"1st":p===2?"2nd":"3rd") + " place" + (p===1?" 👑":"");
+      nextBtn.disabled = false;
+      hint.textContent = "Press Space or tap →";
+    }else if(!ranking.classList.contains("show") && ranked.length > 0){
+      nextBtn.textContent = "⭐ Show the full ranking";
+      nextBtn.disabled = false;
+      hint.textContent = "One more…";
+    }else{
+      nextBtn.textContent = "🎉 Ceremony complete";
+      nextBtn.disabled = true;
+      hint.textContent = "Congratulations to everyone!";
+    }
+  }
+
+  // ---------- drumroll sound (tiny, synthesized, no files) ----------
+  function drumSound(ms){
+    try{
+      var AC = window.AudioContext || window.webkitAudioContext; if(!AC) return;
+      var ctx = drumSound.ctx || (drumSound.ctx = new AC());
+      var len = ctx.sampleRate * (ms/1000);
+      var buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      var d = buf.getChannelData(0);
+      for(var i=0;i<len;i++){
+        var t = i / len;
+        var roll = Math.sin(t * ms / 1000 * 16 * Math.PI * 2) > 0 ? 1 : .35; // 16 hits/sec
+        d[i] = (Math.random()*2-1) * roll * (0.10 + 0.25*t); // building intensity
+      }
+      var src = ctx.createBufferSource(); src.buffer = buf;
+      var flt = ctx.createBiquadFilter(); flt.type = "bandpass"; flt.frequency.value = 220; flt.Q.value = .8;
+      var g = ctx.createGain(); g.gain.value = .5;
+      src.connect(flt); flt.connect(g); g.connect(ctx.destination);
+      src.start();
+    }catch(e){}
+  }
+  function tada(){
+    try{
+      var ctx = drumSound.ctx; if(!ctx) return;
+      [523.25, 659.25, 783.99, 1046.5].forEach(function(f, i){
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = "triangle"; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, ctx.currentTime + i*0.06);
+        g.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + i*0.06 + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i*0.06 + 0.9);
+        o.connect(g); g.connect(ctx.destination);
+        o.start(ctx.currentTime + i*0.06); o.stop(ctx.currentTime + i*0.06 + 1);
+      });
+    }catch(e){}
+  }
+
+  function confetti(gold){
+    var c = document.createElement("div"); c.className = "confetti"; document.body.appendChild(c);
+    var colors = gold ? ["#fbbf24","#fde68a","#f59e0b","#fff7d6","#f472b6"]
+                      : ["#f472b6","#fb923c","#fbbf24","#a78bfa","#22d3ee","#34d399"];
+    var n = gold ? 160 : 90;
+    for(var i=0;i<n;i++){
+      var p = document.createElement("i");
+      var s = 6 + Math.random()*10;
+      p.style.left = (Math.random()*100) + "vw";
+      p.style.width = s + "px"; p.style.height = (s*0.55) + "px";
+      p.style.background = colors[i % colors.length];
+      p.style.animationDelay = (Math.random()*0.8) + "s";
+      p.style.animationDuration = (2.4 + Math.random()*2) + "s";
+      c.appendChild(p);
+    }
+    setTimeout(function(){ if(c.parentNode) c.parentNode.removeChild(c); }, 5400);
+  }
+
+  function countUp(el, target, ms){
+    var start = performance.now();
+    function tick(now){
+      var t = Math.min(1, (now - start) / ms);
+      el.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+      if(t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function reveal(place){
+    var item = ranked[place - 1];
+    var ped = document.querySelector('.ped[data-place="' + place + '"]');
+    if(!item || !ped || busy) return;
+    busy = true; frozen = true; clearInterval(pollTimer);
+    nextBtn.disabled = true;
+
+    // fill the hidden face just-in-time (no early spoilers in the DOM)
+    ped.querySelector("[data-name]").textContent = item.name;
+    ped.querySelector("[data-brief]").textContent = item.brief;
+
+    drumTxt.textContent = "And " + (place===1?"the WINNER":(place===2?"2nd":"3rd") + " place") + " is…";
+    drum.classList.add("show");
+    document.body.classList.add("shake");
+    var ms = place === 1 ? 3600 : 2600;
+    drumSound(ms);
+
+    setTimeout(function(){
+      drum.classList.remove("show");
+      document.body.classList.remove("shake");
+      ped.querySelector(".flip").classList.add("revealed");
+      tada();
+      confetti(place === 1);
+      countUp(ped.querySelector("[data-votes]"), item.votes, 1300);
+      if(place === 1){
+        champ.classList.add("show");
+        setTimeout(function(){ champ.classList.remove("show"); }, 3400);
+        setTimeout(function(){ confetti(true); }, 900);
+      }
+      busy = false;
+      updateBtn();
+    }, ms);
+  }
+
+  function showRanking(){
+    ranking.classList.add("show");
+    var max = Math.max(1, ranked.length ? ranked[0].votes : 1);
+    rankList.innerHTML = ranked.map(function(s, i){
+      var medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":"#"+(i+1);
+      return '<div class="rrow"><span class="pos">'+medal+'</span><span class="nm">'+esc(s.name)+'</span>' +
+        '<span class="bar"><i data-w="'+Math.round((s.votes/max)*100)+'"></i></span>' +
+        '<span class="v">'+s.votes+'</span></div>';
+    }).join("");
+    setTimeout(function(){
+      rankList.querySelectorAll(".bar i").forEach(function(b){ b.style.width = b.getAttribute("data-w") + "%"; });
+    }, 60);
+    ranking.scrollIntoView({ behavior:"smooth", block:"start" });
+    updateBtn();
+  }
+
+  function next(){
+    if(busy) return;
+    if(queue.length){
+      var p = queue.shift();
+      // refresh the numbers one last time right before the first reveal
+      if(!frozen){
+        fetchData().then(function(){ reveal(p); }, function(){ reveal(p); });
+      }else{
+        reveal(p);
+      }
+    }else if(!ranking.classList.contains("show")){
+      showRanking();
+    }
+  }
+
+  nextBtn.addEventListener("click", next);
+  document.addEventListener("keydown", function(e){
+    if(e.code === "Space" || e.key === " "){ e.preventDefault(); next(); }
+  });
+
+  // hide pedestals that have no project (fewer than 3 sites)
+  function trimStage(){
+    [1,2,3].forEach(function(p){
+      var ped = document.querySelector('.ped[data-place="' + p + '"]');
+      if(ped) ped.style.display = (ranked.length >= p) ? "" : "none";
+    });
+  }
+
+  fetchData().then(function(){
+    trimStage(); setupQueue();
+    pollTimer = setInterval(function(){
+      if(!document.hidden && !frozen) fetchData().then(trimStage).catch(function(){});
+    }, 10000);
+  }).catch(function(){
+    totalEl.parentNode.innerHTML = "Can't reach the vote server — refresh to retry";
+  });
+})();
+</script>
+</body>
+</html>

@@ -109,8 +109,9 @@
   .ticket .ev{font-family:'Fredoka',sans-serif;font-size:13px;font-weight:600;margin:0 0 2px}
   .ticket .how{font-size:10.5px;color:var(--muted);font-weight:700;line-height:1.45;margin:0 0 7px}
   .ticket .code{
-    font-family:'Fredoka',sans-serif;font-weight:600;font-size:22px;letter-spacing:4px;
-    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+    /* Solid color on purpose — gradient text turns invisible in print/PDF export */
+    font-family:'Fredoka',sans-serif;font-weight:600;font-size:23px;letter-spacing:4px;
+    color:#4c1d95;
   }
   .ticket .lbl{font-size:9.5px;letter-spacing:1px;color:var(--muted2);font-weight:900;text-transform:uppercase;margin-top:1px}
   .empty-note{color:var(--muted2);font-weight:700;text-align:center;padding:30px 0;font-size:14px}
@@ -159,7 +160,8 @@
     header, .panel, footer, .no-print{display:none !important}
     .wrap{max-width:none;padding:0}
     .tickets{grid-template-columns:1fr 1fr;gap:8mm}
-    .ticket{border:1.5px dashed #888;border-radius:12px}
+    .ticket{border:1.5px dashed #888;border-radius:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .ticket .code{color:#4c1d95 !important}
   }
 </style>
 </head>
@@ -349,7 +351,7 @@
         qr +
         '<div class="tx">' +
           '<p class="ev">🗳️ '+esc(ev)+'</p>' +
-          '<p class="how">Scan the code (or open the voting page) → pick your <b>3 favorite</b> websites → submit with this code:</p>' +
+          '<p class="how">Scan the code (or open the voting page) → pick your favorites (<b>up to 3</b>) → submit with this code:</p>' +
           '<div class="code">'+esc(c)+'</div>' +
           '<div class="lbl">One-time voting code</div>' +
         '</div>' +
